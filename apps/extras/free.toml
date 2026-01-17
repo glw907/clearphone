@@ -1,0 +1,74 @@
+# Extra Free Apps - Optional Open Source Apps
+# These apps are installed via F-Droid if the user chooses them.
+
+[camera]
+id = "camera"
+package_id = "com.simplemobiletools.camera"
+name = "Fossify Camera"
+description = "Simple camera that works well with Fossify Gallery. Lower photo quality than stock camera (no advanced post-processing)."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.camera"
+
+[weather]
+id = "weather"
+package_id = "org.breezyweather"
+name = "Breezy Weather"
+description = "Beautiful, privacy-focused weather app with detailed forecasts and customizable widgets."
+source = "fdroid"
+fdroid_package_name = "org.breezyweather"
+
+[music]
+id = "music"
+package_id = "com.simplemobiletools.musicplayer"
+name = "Fossify Music"
+description = "Simple music player with playlist support, equalizer, and sleep timer."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.musicplayer"
+
+[calculator]
+id = "calculator"
+package_id = "com.simplemobiletools.calculator"
+name = "Fossify Calculator"
+description = "Clean calculator with basic and scientific modes."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.calculator"
+
+[clock]
+id = "clock"
+package_id = "com.simplemobiletools.clock"
+name = "Fossify Clock"
+description = "Alarm clock, timer, and stopwatch in one simple app."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.clock"
+
+[notes]
+id = "notes"
+package_id = "com.simplemobiletools.notes.pro"
+name = "Fossify Notes"
+description = "Quick and simple note-taking app with export options."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.notes.pro"
+
+[calendar]
+id = "calendar"
+package_id = "com.simplemobiletools.calendar.pro"
+name = "Fossify Calendar"
+description = "Calendar and event planner with customizable reminders."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.calendar.pro"
+
+[flashlight]
+id = "flashlight"
+package_id = "com.simplemobiletools.flashlight"
+name = "Fossify Flashlight"
+description = "Simple flashlight with brightness control and SOS mode."
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.flashlight"
+
+[maps]
+id = "maps"
+package_id = "net.osmand"
+name = "OsmAnd"
+description = "Offline maps and navigation powered by OpenStreetMap."
+source = "fdroid"
+fdroid_package_name = "net.osmand"

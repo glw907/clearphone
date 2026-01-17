@@ -1,0 +1,38 @@
+# Extra Non-Free Apps - Optional Proprietary Apps
+# These apps are downloaded directly from official sources (no Google Play required).
+
+[whatsapp]
+id = "whatsapp"
+package_id = "com.whatsapp"
+name = "WhatsApp"
+description = "End-to-end encrypted messaging. Proprietary but allows direct APK download."
+source = "direct"
+download_url = "https://www.whatsapp.com/android/"
+notes = "Download latest APK from official site"
+
+[signal]
+id = "signal"
+package_id = "org.thoughtcrime.securesms"
+name = "Signal"
+description = "Privacy-focused encrypted messaging. Proprietary but open source and Play Services optional."
+source = "direct"
+download_url = "https://signal.org/android/apk/"
+notes = "Official APK, no Play Services required"
+
+[telegram]
+id = "telegram"
+package_id = "org.telegram.messenger"
+name = "Telegram"
+description = "Cloud-based messaging with channels and bots. Proprietary with official direct download."
+source = "direct"
+download_url = "https://telegram.org/android"
+notes = "Official APK download"
+
+[discord]
+id = "discord"
+package_id = "com.discord"
+name = "Discord"
+description = "Voice, video, and text chat platform. Proprietary with official direct APK."
+source = "direct"
+download_url = "https://discord.com/api/download?platform=android"
+notes = "Official APK download"

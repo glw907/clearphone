@@ -1,0 +1,58 @@
+# Core Apps - Always Installed
+# These apps are installed on every configured phone.
+
+[launcher]
+id = "launcher"
+package_id = "app.olauncher"
+name = "Olauncher"
+source = "fdroid"
+fdroid_package_name = "app.olauncher"
+installation_priority = 1
+
+[keyboard]
+id = "keyboard"
+package_id = "org.futo.inputmethod.latin"
+name = "FUTO Keyboard"
+source = "fdroid"
+fdroid_package_name = "org.futo.inputmethod.latin"
+installation_priority = 5
+
+[dialer]
+id = "dialer"
+package_id = "com.simplemobiletools.dialer"
+name = "Fossify Dialer"
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.dialer"
+installation_priority = 10
+
+[messaging]
+id = "messaging"
+package_id = "com.simplemobiletools.smsmessenger"
+name = "Fossify Messages"
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.smsmessenger"
+installation_priority = 10
+
+[contacts]
+id = "contacts"
+package_id = "com.simplemobiletools.contacts.pro"
+name = "Fossify Contacts"
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.contacts.pro"
+installation_priority = 20
+
+[gallery]
+id = "gallery"
+package_id = "com.simplemobiletools.gallery.pro"
+name = "Fossify Gallery"
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.gallery.pro"
+installation_priority = 20
+
+[files]
+id = "files"
+package_id = "com.simplemobiletools.filemanager.pro"
+name = "Fossify Files"
+source = "fdroid"
+fdroid_package_name = "com.simplemobiletools.filemanager.pro"
+installation_priority = 30

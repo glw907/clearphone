@@ -1,0 +1,308 @@
+# Samsung Galaxy S24 Device Profile
+# Maintainer: @glw907
+# Last updated: 2026-01-16
+
+[device]
+model_pattern = "SM-S921*"  # Matches all S24 variants
+name = "Samsung Galaxy S24"
+android_version = "14"
+maintainer = "glw907"
+
+# Apps configuration
+[apps]
+# Core apps are always installed (defined in apps/core.toml)
+# Note: "camera" is NOT in this list - it's handled via interactive camera choice prompt
+extras_free = ["weather", "music", "calculator", "clock", "notes", "calendar", "flashlight", "maps"]
+extras_non_free = []
+
+# Samsung System Apps - Core bloatware
+[[packages]]
+id = "com.samsung.android.bixby.agent"
+name = "Bixby Voice"
+source = "Samsung"
+function = "Voice assistant"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Replaced by user's preferred apps"
+
+[[packages]]
+id = "com.samsung.android.bixby.wakeup"
+name = "Bixby Wake-up"
+source = "Samsung"
+function = "Bixby activation"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Bixby ecosystem"
+
+[[packages]]
+id = "com.samsung.android.visionintelligence"
+name = "Bixby Vision"
+source = "Samsung"
+function = "Visual search"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Bixby ecosystem"
+
+[[packages]]
+id = "com.samsung.android.app.routines"
+name = "Bixby Routines"
+source = "Samsung"
+function = "Automation"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Bixby ecosystem"
+
+# Samsung Apps
+[[packages]]
+id = "com.samsung.android.samsungpass"
+name = "Samsung Pass"
+source = "Samsung"
+function = "Password manager"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Users can choose their own password manager"
+
+[[packages]]
+id = "com.samsung.android.spay"
+name = "Samsung Pay"
+source = "Samsung"
+function = "Mobile payments"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Not essential for basic phone functionality"
+
+[[packages]]
+id = "com.samsung.android.scloud"
+name = "Samsung Cloud"
+source = "Samsung"
+function = "Cloud storage"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Users can choose their own cloud storage"
+
+[[packages]]
+id = "com.samsung.android.app.notes"
+name = "Samsung Notes"
+source = "Samsung"
+function = "Note-taking"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Replaced by Fossify Notes"
+
+[[packages]]
+id = "com.samsung.android.email.provider"
+name = "Samsung Email"
+source = "Samsung"
+function = "Email client"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Users can install their preferred email app"
+
+[[packages]]
+id = "com.samsung.android.calendar"
+name = "Samsung Calendar"
+source = "Samsung"
+function = "Calendar"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Replaced by Fossify Calendar"
+
+# Samsung Browser
+[[packages]]
+id = "com.sec.android.app.sbrowser"
+name = "Samsung Internet"
+source = "Samsung"
+function = "Web browser"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Users can install their preferred browser"
+
+# Samsung Gallery (always removed - using Fossify Gallery)
+[[packages]]
+id = "com.sec.android.gallery3d"
+name = "Samsung Gallery"
+source = "Samsung"
+function = "Photo gallery"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Replaced by Fossify Gallery"
+
+# Samsung Camera (conditional - only removed if user chooses Fossify Camera)
+[[packages]]
+id = "com.sec.android.app.camera"
+name = "Samsung Camera"
+source = "Samsung"
+function = "Stock camera app with advanced post-processing"
+category = "system"
+action = "remove"
+conditional = "camera"
+removal_rationale = "Conditionally removed only if user chooses Fossify Camera. Offers better photo quality but has broken gallery links after configuration."
+
+# Game Launcher
+[[packages]]
+id = "com.samsung.android.game.gamehome"
+name = "Game Launcher"
+source = "Samsung"
+function = "Game management"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Not needed for minimal phone"
+
+[[packages]]
+id = "com.samsung.android.game.gametools"
+name = "Game Tools"
+source = "Samsung"
+function = "Gaming utilities"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Not needed for minimal phone"
+
+# AR and VR
+[[packages]]
+id = "com.samsung.android.arzone"
+name = "AR Zone"
+source = "Samsung"
+function = "AR features"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Not essential for basic functionality"
+
+# Kids Mode
+[[packages]]
+id = "com.samsung.android.kidsinstaller"
+name = "Kids Installer"
+source = "Samsung"
+function = "Kids mode setup"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Specialized feature not needed for minimal phone"
+
+# Social Media (Pre-installed)
+[[packages]]
+id = "com.facebook.katana"
+name = "Facebook"
+source = "Meta"
+function = "Social media"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Pre-installed bloatware"
+
+[[packages]]
+id = "com.facebook.system"
+name = "Facebook App Manager"
+source = "Meta"
+function = "Facebook services"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Facebook bloatware"
+
+[[packages]]
+id = "com.facebook.appmanager"
+name = "Facebook App Installer"
+source = "Meta"
+function = "Facebook services"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Facebook bloatware"
+
+[[packages]]
+id = "com.facebook.services"
+name = "Facebook Services"
+source = "Meta"
+function = "Facebook services"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Part of Facebook bloatware"
+
+# Microsoft Apps
+[[packages]]
+id = "com.microsoft.appmanager"
+name = "Microsoft App Manager"
+source = "Microsoft"
+function = "Microsoft services"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Pre-installed bloatware"
+
+[[packages]]
+id = "com.microsoft.skydrive"
+name = "OneDrive"
+source = "Microsoft"
+function = "Cloud storage"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Pre-installed bloatware"
+
+# Google Apps (Removable)
+[[packages]]
+id = "com.google.android.apps.docs"
+name = "Google Drive"
+source = "Google"
+function = "Cloud storage"
+category = "google"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.google.android.apps.youtube.music"
+name = "YouTube Music"
+source = "Google"
+function = "Music streaming"
+category = "google"
+action = "remove"
+removal_rationale = "Replaced by Fossify Music for local playback"
+
+[[packages]]
+id = "com.google.android.youtube"
+name = "YouTube"
+source = "Google"
+function = "Video streaming"
+category = "google"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.google.android.apps.maps"
+name = "Google Maps"
+source = "Google"
+function = "Maps and navigation"
+category = "google"
+action = "remove"
+removal_rationale = "Replaced by OsmAnd"
+
+[[packages]]
+id = "com.google.android.gm"
+name = "Gmail"
+source = "Google"
+function = "Email client"
+category = "google"
+action = "remove"
+removal_rationale = "Users can install their preferred email app"
+
+[[packages]]
+id = "com.google.android.apps.photos"
+name = "Google Photos"
+source = "Google"
+function = "Photo backup and gallery"
+category = "google"
+action = "remove"
+removal_rationale = "Replaced by Fossify Gallery"
+
+# Carrier Bloatware (Examples - adjust based on carrier)
+[[packages]]
+id = "com.dti.att"
+name = "AT&T Services"
+source = "Carrier"
+function = "Carrier services"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Carrier bloatware"
+
+[[packages]]
+id = "com.vzw.hss.myverizon"
+name = "My Verizon"
+source = "Carrier"
+function = "Carrier account management"
+category = "bloatware"
+action = "remove"
+removal_rationale = "Carrier bloatware"
