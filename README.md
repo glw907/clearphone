@@ -114,7 +114,7 @@ This project stands on the shoulders of giants:
 
 ### F-Droid
 
-The entire F-Droid ecosystem makes this project possible. F-Droid provides trusted, reproducible builds of open-source Android apps and maintains the infrastructure for secure distribution. Without F-Droid, building a Google-free phone would require users to compile and verify every app themselves.
+The entire F-Droid ecosystem makes this project possible. F-Droid provides trusted, reproducible builds of open-source Android apps and maintains the infrastructure for secure distribution. Without F-Droid, building a privacy-respecting phone with open-source apps would require users to compile and verify every app themselves.
 
 ### Fossify
 
@@ -130,11 +130,11 @@ FUTO Keyboard delivers privacy-focused typing with offline voice input, ensuring
 
 ### Breezy Weather
 
-Breezy Weather is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. For users escaping Google's ecosystem, it's an essential replacement that proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
+Breezy Weather is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. It proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
 
 ### OsmAnd & OpenStreetMap
 
-OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a Google-free phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
+OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a low-distraction, privacy-respecting phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
 
 ### Proprietary Software Vendors
 

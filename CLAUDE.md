@@ -472,6 +472,8 @@ ruff format .
 All project writing—documentation, error messages, comments, commit messages—should follow [docs/style-guide.md](docs/style-guide.md). Key points:
 
 - **Terminology**: Use "configured phone" not "safe phone"; "remove" not "block"
+- **Avoid**: "de-Google", "Google-free", "escaping [company]'s ecosystem"—inaccurate and unnecessarily adversarial
+- **Project goal**: Low-distraction, privacy-respecting phones (not anti-any-company)
 - **Tone**: Friendly, matter-of-fact, no hype
 - **Error messages**: Explain what happened and how to fix it
 - **Audience awareness**: Technical docs assume technical readers; guides do not
