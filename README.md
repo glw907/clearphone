@@ -116,40 +116,25 @@ This project stands on the shoulders of giants:
 
 The entire F-Droid ecosystem makes this project possible. F-Droid provides trusted, reproducible builds of open-source Android apps and maintains the infrastructure for secure distribution. Without F-Droid, building a Google-free phone would require users to compile and verify every app themselves.
 
+### Fossify
+
+The Fossify suite (formerly Simple Mobile Tools) provides essential phone functionality with clean, simple interfaces. Clearphone uses Fossify Dialer, Messages, Contacts, Gallery, Camera (optional), Files, Music, Calculator, Clock, Notes, Calendar, and Flashlight. These apps prove that open-source alternatives can be both beautiful and functional, without ads, tracking, or unnecessary permissions.
+
 ### Olauncher
 
-**Olauncher** provides the minimal launcher that reduces distractions and helps users focus on what matters. Its clean, text-based interface is the foundation of the configured phone experience.
+Olauncher provides the minimal launcher that reduces distractions and helps users focus on what matters. Its clean, text-based interface is the foundation of the configured phone experience.
 
 ### FUTO Keyboard
 
-**FUTO Keyboard** delivers privacy-focused typing with offline voice input, ensuring your keystrokes and voice data never leave your device.
-
-### Fossify Apps
-
-The Fossify suite (formerly Simple Mobile Tools) provides essential phone functionality with clean, simple interfaces:
-
-- **Fossify Dialer** — Clean dialer with call blocking and recording
-- **Fossify Messages** — Simple SMS/MMS without Google dependencies
-- **Fossify Contacts** — Contact management with import/export
-- **Fossify Gallery** — Photo and video gallery with editing tools
-- **Fossify Camera** — Simple camera app (optional replacement for stock)
-- **Fossify Files** — File manager with network storage support
-- **Fossify Music** — Local music player with playlists and equalizer
-- **Fossify Calculator** — Basic and scientific calculator modes
-- **Fossify Clock** — Alarms, timer, and stopwatch
-- **Fossify Notes** — Quick note-taking with export options
-- **Fossify Calendar** — Event management and reminders
-- **Fossify Flashlight** — Brightness control and SOS mode
+FUTO Keyboard delivers privacy-focused typing with offline voice input, ensuring your keystrokes and voice data never leave your device.
 
 ### Breezy Weather
 
-**Breezy Weather** is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. For users escaping Google's ecosystem, it's an essential replacement that proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
+Breezy Weather is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. For users escaping Google's ecosystem, it's an essential replacement that proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
 
 ### OsmAnd & OpenStreetMap
 
-**OsmAnd** (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by **OpenStreetMap** data. This is crucial for a Google-free phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service.
-
-OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
+OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a Google-free phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
 
 ### Proprietary Software Vendors
 
