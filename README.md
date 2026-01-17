@@ -29,7 +29,7 @@ clearphone configure device-profiles/samsung-s24.toml
 **What happens:**
 1. **Camera choice** — Choose between stock camera (better quality, broken gallery links) or Fossify Camera (simpler, lower quality)
 2. **Package removal** — Removes bloatware and conditionally removes stock camera if you chose Fossify
-3. **Core apps installation** — Installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager from F-Droid
+3. **Core apps installation** — Downloads APKs from F-Droid repository and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager via ADB
 4. **Optional apps** — Prompts you to choose from extras (open source and proprietary)
 5. **Default configuration** — Sets installed apps as defaults
 
@@ -61,7 +61,7 @@ Modern smartphones come loaded with apps you didn't ask for and can't remove. Ca
 
 **Rootless ADB only** — Uses `pm uninstall --user 0`, which works on locked bootloaders and is safer than root operations.
 
-**F-Droid + Direct APK** — Open-source apps from F-Droid; select proprietary apps via official direct downloads. No Google Play dependency.
+**F-Droid Repository + Direct APK Downloads** — Open-source apps downloaded from F-Droid's repository; proprietary apps downloaded from official sources. All apps installed via ADB. No F-Droid app or Google Play required.
 
 **Device maintainer model** — Each profile has a dedicated maintainer who tests on real hardware and keeps it current.
 

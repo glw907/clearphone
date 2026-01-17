@@ -8,10 +8,11 @@ This document is for developers working on Clearphone, particularly when using C
 
 Clearphone transforms Android smartphones into minimal, low-distraction devices by removing bloatware and installing privacy-focused alternatives.
 
-**Current version:** 0.1.0 (CLI prototype)  
-**Target devices:** Samsung Galaxy S24, Google Pixel 8/8a  
-**Interface:** Command-line only  
-**App sources:** F-Droid (open source), direct APK download (proprietary)
+**Current version:** 0.1.0 (CLI prototype)
+**Target devices:** Samsung Galaxy S24, Google Pixel 8/8a
+**Interface:** Command-line only
+**App sources:** F-Droid repository (open source APKs), direct APK downloads (proprietary)
+**Installation method:** ADB (no F-Droid app or Play Store required)
 
 ### Why Two Devices?
 
@@ -177,7 +178,7 @@ installation_priority = 30
 
 ### Extra Free Apps (`apps/extras/free.toml`)
 
-Optional open-source apps, installed via F-Droid. **All extras require a `description` field** for interactive selection:
+Optional open-source apps with APKs downloaded from F-Droid's repository and installed via ADB. **All extras require a `description` field** for interactive selection:
 
 ```toml
 [camera]
@@ -569,7 +570,7 @@ Some packages can't be removed (Knox-protected on Samsung, system-critical). Bet
 
 ### F-Droid + Direct APK
 
-Open-source apps from F-Droid; select proprietary apps (WhatsApp, Signal, Telegram, Discord) via official direct download. No Play Store dependency.
+Open-source APKs downloaded from F-Droid's repository; proprietary APKs downloaded from official sources. All apps installed via ADB. No F-Droid app or Play Store required.
 
 ### No Customization UI
 

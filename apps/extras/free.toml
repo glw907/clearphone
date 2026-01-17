@@ -1,5 +1,5 @@
 # Extra Free Apps - Optional Open Source Apps
-# These apps are installed via F-Droid if the user chooses them.
+# APKs are downloaded from F-Droid's repository and installed via ADB if the user chooses them.
 
 [camera]
 id = "camera"
