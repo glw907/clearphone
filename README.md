@@ -141,10 +141,15 @@ The Fossify suite (formerly Simple Mobile Tools) provides essential phone functi
 - **Fossify Calendar** — Event management and reminders
 - **Fossify Flashlight** — Brightness control and SOS mode
 
-### Other Open Source Projects
+### Breezy Weather
 
-- **Breezy Weather** — Beautiful, detailed weather forecasts
-- **OsmAnd** — Offline maps and navigation powered by OpenStreetMap
+**Breezy Weather** is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. For users escaping Google's ecosystem, it's an essential replacement that proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
+
+### OsmAnd & OpenStreetMap
+
+**OsmAnd** (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by **OpenStreetMap** data. This is crucial for a Google-free phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service.
+
+OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
 
 ### Proprietary Software Vendors
 
