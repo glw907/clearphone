@@ -116,12 +116,18 @@ This project stands on the shoulders of giants:
 
 The entire F-Droid ecosystem makes this project possible. F-Droid provides trusted, reproducible builds of open-source Android apps and maintains the infrastructure for secure distribution. Without F-Droid, building a Google-free phone would require users to compile and verify every app themselves.
 
+### Olauncher
+
+**Olauncher** provides the minimal launcher that reduces distractions and helps users focus on what matters. Its clean, text-based interface is the foundation of the configured phone experience.
+
+### FUTO Keyboard
+
+**FUTO Keyboard** delivers privacy-focused typing with offline voice input, ensuring your keystrokes and voice data never leave your device.
+
 ### Fossify Apps
 
-The Fossify suite provides essential phone functionality with clean, simple interfaces:
+The Fossify suite (formerly Simple Mobile Tools) provides essential phone functionality with clean, simple interfaces:
 
-- **Olauncher** — Minimal launcher that reduces distractions
-- **FUTO Keyboard** — Privacy-focused keyboard with offline voice typing
 - **Fossify Dialer** — Clean dialer with call blocking and recording
 - **Fossify Messages** — Simple SMS/MMS without Google dependencies
 - **Fossify Contacts** — Contact management with import/export
