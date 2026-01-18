@@ -239,6 +239,15 @@ removal_rationale = "Pre-installed vendor app"
 
 # Google Apps (Removable)
 [[packages]]
+id = "com.android.vending"
+name = "Play Store"
+source = "Google"
+function = "App store"
+category = "google"
+action = "remove"
+removal_rationale = "Clearphone mode removes app stores by default. Use --enable-play-store or --smartphone-mode to keep."
+
+[[packages]]
 id = "com.google.android.apps.docs"
 name = "Google Drive"
 source = "Google"

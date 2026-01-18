@@ -14,9 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""API layer for Clearphone."""
+"""API layer for Clearphone.
 
-from clearphone.api.controller import ConfigurationController
+Note: ConfigurationController is intentionally not imported here to avoid
+circular imports. Import it directly: from clearphone.api.controller import ConfigurationController
+"""
+
 from clearphone.api.events import (
     CameraChoiceEvent,
     DefaultAppEvent,
@@ -32,8 +35,6 @@ from clearphone.api.events import (
 )
 
 __all__ = [
-    # Controller
-    "ConfigurationController",
     # Events
     "CameraChoiceEvent",
     "DefaultAppEvent",

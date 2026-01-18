@@ -67,6 +67,11 @@ class ADBResult:
         """Check if the command succeeded."""
         return self.returncode == 0
 
+    @property
+    def error(self) -> str:
+        """Get error message if command failed."""
+        return self.stderr or self.stdout
+
 
 @dataclass
 class DeviceInfo:
@@ -318,6 +323,27 @@ class ADBDevice:
         try:
             output = self._shell(command, timeout=self.LONG_TIMEOUT_S)
             success = "disabled" in output.lower() or "new state" in output.lower()
+            return ADBResult(
+                returncode=0 if success else 1,
+                stdout=output,
+                stderr="" if success else output,
+            )
+        except ADBCommandError as e:
+            return ADBResult(returncode=e.returncode, stdout="", stderr=e.error)
+
+    def enable_package(self, package_id: str) -> ADBResult:
+        """Enable a previously disabled package.
+
+        Args:
+            package_id: Package identifier
+
+        Returns:
+            ADBResult with command output
+        """
+        command = f"pm enable {package_id}"
+        try:
+            output = self._shell(command, timeout=self.LONG_TIMEOUT_S)
+            success = "enabled" in output.lower() or "new state" in output.lower()
             return ADBResult(
                 returncode=0 if success else 1,
                 stdout=output,

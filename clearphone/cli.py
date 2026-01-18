@@ -46,8 +46,11 @@ from clearphone.api.events import (
     PhaseEvent,
     WorkflowEvent,
 )
-from clearphone.core.apps_catalog import AppDefinition
-from clearphone.core.exceptions import ClearphoneError
+from clearphone.core.adb import ADBDevice
+from clearphone.core.apps_catalog import AppDefinition, load_apps_catalog
+from clearphone.core.downloader import APKDownloader
+from clearphone.core.exceptions import ClearphoneError, NoDeviceConnectedError
+from clearphone.core.installer import AppInstaller
 from clearphone.core.workflow import WorkflowResult
 
 app = typer.Typer(
@@ -289,12 +292,40 @@ def configure(
             help="Show what would be done without making changes",
         ),
     ] = False,
-    non_interactive: Annotated[
+    interactive: Annotated[
         bool,
         typer.Option(
-            "--non-interactive",
-            "-y",
-            help="Use defaults without prompting",
+            "--interactive",
+            "-i",
+            help="Guided prompts for extras selection",
+        ),
+    ] = False,
+    smartphone_mode: Annotated[
+        bool,
+        typer.Option(
+            "--smartphone-mode",
+            help="Enable both browser and Play Store",
+        ),
+    ] = False,
+    enable_browser: Annotated[
+        bool,
+        typer.Option(
+            "--enable-browser",
+            help="Install Fennec browser",
+        ),
+    ] = False,
+    enable_play_store: Annotated[
+        bool,
+        typer.Option(
+            "--enable-play-store",
+            help="Keep Play Store available",
+        ),
+    ] = False,
+    keep_vendor_camera: Annotated[
+        bool,
+        typer.Option(
+            "--keep-vendor-camera",
+            help="Keep stock camera instead of Fossify Camera",
         ),
     ] = False,
     download_dir: Annotated[
@@ -305,6 +336,20 @@ def configure(
             help="Directory for downloaded APKs",
         ),
     ] = None,
+    # Individual app install flags - FOSS apps
+    install_weather: Annotated[bool, typer.Option("--install-weather", help="Install Breezy Weather")] = False,
+    install_music: Annotated[bool, typer.Option("--install-music", help="Install Fossify Music")] = False,
+    install_calculator: Annotated[bool, typer.Option("--install-calculator", help="Install Fossify Calculator")] = False,
+    install_clock: Annotated[bool, typer.Option("--install-clock", help="Install Fossify Clock")] = False,
+    install_notes: Annotated[bool, typer.Option("--install-notes", help="Install Fossify Notes")] = False,
+    install_calendar: Annotated[bool, typer.Option("--install-calendar", help="Install Fossify Calendar")] = False,
+    install_flashlight: Annotated[bool, typer.Option("--install-flashlight", help="Install Fossify Flashlight")] = False,
+    install_maps: Annotated[bool, typer.Option("--install-maps", help="Install OsmAnd maps")] = False,
+    # Individual app install flags - Proprietary apps
+    install_whatsapp: Annotated[bool, typer.Option("--install-whatsapp", help="Install WhatsApp")] = False,
+    install_signal: Annotated[bool, typer.Option("--install-signal", help="Install Signal")] = False,
+    install_telegram: Annotated[bool, typer.Option("--install-telegram", help="Install Telegram")] = False,
+    install_discord: Annotated[bool, typer.Option("--install-discord", help="Install Discord")] = False,
 ) -> None:
     """Configure a connected Android device using a profile."""
     project_root = get_project_root()
@@ -317,12 +362,44 @@ def configure(
             err_console.print(f"[red]Error:[/] {error}")
         raise typer.Exit(1)
 
+    # Handle smartphone mode (sets both browser and play store)
+    if smartphone_mode:
+        enable_browser = True
+        enable_play_store = True
+
+    # Collect explicit install requests
+    install_extras: list[str] = []
+    if install_weather:
+        install_extras.append("weather")
+    if install_music:
+        install_extras.append("music")
+    if install_calculator:
+        install_extras.append("calculator")
+    if install_clock:
+        install_extras.append("clock")
+    if install_notes:
+        install_extras.append("notes")
+    if install_calendar:
+        install_extras.append("calendar")
+    if install_flashlight:
+        install_extras.append("flashlight")
+    if install_maps:
+        install_extras.append("maps")
+    if install_whatsapp:
+        install_extras.append("whatsapp")
+    if install_signal:
+        install_extras.append("signal")
+    if install_telegram:
+        install_extras.append("telegram")
+    if install_discord:
+        install_extras.append("discord")
+
     if dry_run:
         console.print("[yellow]Dry run mode - no changes will be made[/]\n")
 
     # Set up callbacks for interactive mode
-    camera_callback = None if non_interactive else camera_choice_prompt
-    extras_callback = None if non_interactive else extras_choice_prompt
+    camera_callback = camera_choice_prompt if interactive else None
+    extras_callback = extras_choice_prompt if interactive else None
 
     # Create event handler
     handler = CLIEventHandler(console)
@@ -332,8 +409,12 @@ def configure(
         gen = controller.configure(
             profile_path=profile,
             dry_run=dry_run,
-            non_interactive=non_interactive,
+            interactive=interactive,
             download_dir=download_dir,
+            enable_browser=enable_browser,
+            enable_play_store=enable_play_store,
+            keep_vendor_camera=keep_vendor_camera,
+            install_extras=install_extras,
             camera_choice_callback=camera_callback,
             extras_choice_callback=extras_callback,
         )
@@ -345,7 +426,7 @@ def configure(
 
                 # Handle camera and extras selection events specially
                 if isinstance(event, CameraChoiceEvent):
-                    if event.type == EventType.CAMERA_CHOICE_REQUIRED and not non_interactive:
+                    if event.type == EventType.CAMERA_CHOICE_REQUIRED and interactive:
                         continue  # Callback handles this
                     elif event.type == EventType.CAMERA_CHOICE_MADE:
                         choice_display = (
@@ -355,7 +436,7 @@ def configure(
                         )
                         console.print(f"  [cyan]→[/] Camera choice: {choice_display}")
                 elif isinstance(event, ExtrasSelectionEvent):
-                    if event.type == EventType.EXTRAS_SELECTION_REQUIRED and not non_interactive:
+                    if event.type == EventType.EXTRAS_SELECTION_REQUIRED and interactive:
                         continue  # Callback handles this
                     elif event.type == EventType.EXTRAS_SELECTION_MADE:
                         total = len(event.selected_free) + len(event.selected_non_free)
@@ -469,6 +550,227 @@ def show_profile(
         if e.suggestion:
             err_console.print(f"\n{e.suggestion}")
         raise typer.Exit(1) from None
+
+
+@app.command("enable-browser")
+def enable_browser_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Install Fennec browser on a configured phone."""
+    project_root = get_project_root()
+
+    try:
+        # Connect to device
+        console.print("Connecting to device...")
+        adb = ADBDevice()
+        device_info = adb.connect()
+        console.print(f"Connected to {device_info.manufacturer} {device_info.model}")
+
+        # Load catalog to get browser app
+        catalog = load_apps_catalog(project_root)
+        if "browser" not in catalog.extras_free:
+            err_console.print("[red]Error:[/] Browser app not found in catalog")
+            raise typer.Exit(1)
+
+        browser_app = catalog.extras_free["browser"]
+
+        # Download browser
+        download_dir = project_root / "downloads"
+        console.print(f"Downloading {browser_app.name}...")
+
+        with APKDownloader(download_dir) as downloader:
+            gen = downloader.download_app(browser_app)
+            apk_path = None
+            try:
+                while True:
+                    event = next(gen)
+                    if event.type == EventType.DOWNLOAD_COMPLETED:
+                        console.print(f"  [green]✓[/] Downloaded: {browser_app.name}")
+            except StopIteration as e:
+                apk_path = e.value
+
+            if not apk_path:
+                err_console.print("[red]Error:[/] Failed to download browser")
+                raise typer.Exit(1)
+
+        # Install browser
+        if dry_run:
+            console.print(f"[yellow]Dry run:[/] Would install {browser_app.name}")
+        else:
+            console.print(f"Installing {browser_app.name}...")
+            installer = AppInstaller(adb, dry_run=False)
+            install_gen = installer.install_apps([(browser_app, apk_path)])
+            try:
+                while True:
+                    event = next(install_gen)
+                    if event.type == EventType.INSTALL_COMPLETED:
+                        console.print(f"  [green]✓[/] Installed: {browser_app.name}")
+                    elif event.type == EventType.INSTALL_FAILED:
+                        console.print(f"  [red]✗[/] Failed to install: {browser_app.name}")
+            except StopIteration:
+                pass
+
+        console.print("\n[green]Browser enabled.[/]")
+
+    except NoDeviceConnectedError:
+        err_console.print("[red]Error:[/] No device connected. Connect a device via USB and enable USB debugging.")
+        raise typer.Exit(1) from None
+    except ClearphoneError as e:
+        err_console.print(f"[red]Error:[/] {e.message}")
+        raise typer.Exit(1) from None
+
+
+@app.command("disable-browser")
+def disable_browser_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Remove Fennec browser from a configured phone."""
+    project_root = get_project_root()
+
+    try:
+        # Connect to device
+        console.print("Connecting to device...")
+        adb = ADBDevice()
+        device_info = adb.connect()
+        console.print(f"Connected to {device_info.manufacturer} {device_info.model}")
+
+        # Load catalog to get browser package
+        catalog = load_apps_catalog(project_root)
+        if "browser" not in catalog.extras_free:
+            err_console.print("[red]Error:[/] Browser app not found in catalog")
+            raise typer.Exit(1)
+
+        browser_app = catalog.extras_free["browser"]
+
+        # Uninstall browser
+        if dry_run:
+            console.print(f"[yellow]Dry run:[/] Would uninstall {browser_app.name} ({browser_app.package_id})")
+        else:
+            console.print(f"Uninstalling {browser_app.name}...")
+            result = adb.uninstall_package(browser_app.package_id)
+            if result.success:
+                console.print(f"  [green]✓[/] Uninstalled: {browser_app.name}")
+            else:
+                console.print(f"  [yellow]⚠[/] {browser_app.name} may not be installed")
+
+        console.print("\n[green]Browser disabled.[/]")
+
+    except NoDeviceConnectedError:
+        err_console.print("[red]Error:[/] No device connected. Connect a device via USB and enable USB debugging.")
+        raise typer.Exit(1) from None
+    except ClearphoneError as e:
+        err_console.print(f"[red]Error:[/] {e.message}")
+        raise typer.Exit(1) from None
+
+
+@app.command("enable-play-store")
+def enable_play_store_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Re-enable Play Store on a configured phone."""
+    try:
+        # Connect to device
+        console.print("Connecting to device...")
+        adb = ADBDevice()
+        device_info = adb.connect()
+        console.print(f"Connected to {device_info.manufacturer} {device_info.model}")
+
+        # Enable Play Store
+        package_id = "com.android.vending"
+        if dry_run:
+            console.print(f"[yellow]Dry run:[/] Would enable {package_id}")
+        else:
+            console.print("Enabling Play Store...")
+            result = adb.enable_package(package_id)
+            if result.success:
+                console.print("  [green]✓[/] Play Store enabled")
+            else:
+                console.print(f"  [yellow]⚠[/] Could not enable Play Store: {result.error}")
+
+        console.print("\n[green]Play Store enabled.[/]")
+
+    except NoDeviceConnectedError:
+        err_console.print("[red]Error:[/] No device connected. Connect a device via USB and enable USB debugging.")
+        raise typer.Exit(1) from None
+    except ClearphoneError as e:
+        err_console.print(f"[red]Error:[/] {e.message}")
+        raise typer.Exit(1) from None
+
+
+@app.command("disable-play-store")
+def disable_play_store_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Disable Play Store on a configured phone."""
+    try:
+        # Connect to device
+        console.print("Connecting to device...")
+        adb = ADBDevice()
+        device_info = adb.connect()
+        console.print(f"Connected to {device_info.manufacturer} {device_info.model}")
+
+        # Disable Play Store
+        package_id = "com.android.vending"
+        if dry_run:
+            console.print(f"[yellow]Dry run:[/] Would disable {package_id}")
+        else:
+            console.print("Disabling Play Store...")
+            result = adb.disable_package(package_id)
+            if result.success:
+                console.print("  [green]✓[/] Play Store disabled")
+            else:
+                console.print(f"  [yellow]⚠[/] Could not disable Play Store: {result.error}")
+
+        console.print("\n[green]Play Store disabled.[/]")
+
+    except NoDeviceConnectedError:
+        err_console.print("[red]Error:[/] No device connected. Connect a device via USB and enable USB debugging.")
+        raise typer.Exit(1) from None
+    except ClearphoneError as e:
+        err_console.print(f"[red]Error:[/] {e.message}")
+        raise typer.Exit(1) from None
+
+
+@app.command("clearphone-mode")
+def clearphone_mode_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Disable both browser and Play Store (default clearphone state)."""
+    console.print("[bold]Switching to clearphone mode...[/]\n")
+    disable_browser_cmd(dry_run=dry_run)
+    console.print()
+    disable_play_store_cmd(dry_run=dry_run)
+    console.print("\n[bold green]Clearphone mode enabled.[/]")
+
+
+@app.command("smartphone-mode")
+def smartphone_mode_cmd(
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", "-n", help="Show what would be done without making changes"),
+    ] = False,
+) -> None:
+    """Enable both browser and Play Store."""
+    console.print("[bold]Switching to smartphone mode...[/]\n")
+    enable_browser_cmd(dry_run=dry_run)
+    console.print()
+    enable_play_store_cmd(dry_run=dry_run)
+    console.print("\n[bold green]Smartphone mode enabled.[/]")
 
 
 @app.callback(invoke_without_command=True)

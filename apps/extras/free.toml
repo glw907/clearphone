@@ -1,6 +1,14 @@
 # Extra Free Apps - Optional Open Source Apps
 # APKs are downloaded from F-Droid's repository and installed via ADB if the user chooses them.
 
+[browser]
+id = "browser"
+package_id = "org.mozilla.fennec_fdroid"
+name = "Fennec"
+description = "Privacy-focused Firefox fork from F-Droid. No telemetry."
+source = "fdroid"
+fdroid_package_name = "org.mozilla.fennec_fdroid"
+
 [camera]
 id = "camera"
 package_id = "com.simplemobiletools.camera"

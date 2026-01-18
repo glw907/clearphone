@@ -134,8 +134,12 @@ class ConfigurationController:
         self,
         profile_path: Path,
         dry_run: bool = False,
-        non_interactive: bool = False,
+        interactive: bool = False,
         download_dir: Path | None = None,
+        enable_browser: bool = False,
+        enable_play_store: bool = False,
+        keep_vendor_camera: bool = False,
+        install_extras: list[str] | None = None,
         camera_choice_callback: CameraChoiceCallback | None = None,
         extras_choice_callback: ExtrasChoiceCallback | None = None,
     ) -> Generator[Event, None, WorkflowResult]:
@@ -144,8 +148,12 @@ class ConfigurationController:
         Args:
             profile_path: Path to the device profile
             dry_run: If True, don't make actual changes
-            non_interactive: If True, use defaults without prompting
+            interactive: If True, prompt for extras selection
             download_dir: Directory for downloaded APKs
+            enable_browser: If True, install Fennec browser
+            enable_play_store: If True, keep Play Store available
+            keep_vendor_camera: If True, keep stock camera instead of Fossify
+            install_extras: List of extra app IDs to install
             camera_choice_callback: Callback for camera choice
             extras_choice_callback: Callback for extras selection
 
@@ -163,8 +171,12 @@ class ConfigurationController:
             profile_path=profile_path,
             project_root=self.project_root,
             dry_run=dry_run,
-            non_interactive=non_interactive,
+            interactive=interactive,
             download_dir=download_dir,
+            enable_browser=enable_browser,
+            enable_play_store=enable_play_store,
+            keep_vendor_camera=keep_vendor_camera,
+            install_extras=install_extras or [],
         )
 
         workflow = ConfigurationWorkflow(

@@ -77,9 +77,8 @@ class TestCLIConfigure:
         profile_path = project_root / "device-profiles" / "samsung-s24.toml"
 
         # This will fail because ADB is not available in test environment
-        result = runner.invoke(
-            app, ["configure", str(profile_path), "--dry-run", "--non-interactive"]
-        )
+        # Default mode is non-interactive (no --interactive flag needed)
+        result = runner.invoke(app, ["configure", str(profile_path), "--dry-run"])
 
         # Should fail with helpful error about ADB
         # (unless ADB happens to be installed on the test machine)
@@ -91,7 +90,9 @@ class TestCLIConfigure:
         result = runner.invoke(app, ["configure", "--help"])
         assert result.exit_code == 0
         assert "--dry-run" in result.stdout
-        assert "--non-interactive" in result.stdout
+        assert "--interactive" in result.stdout
+        assert "--smartphone-mode" in result.stdout
+        assert "--enable-browser" in result.stdout
 
 
 class TestCLIHelp:

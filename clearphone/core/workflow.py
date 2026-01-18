@@ -59,8 +59,13 @@ class WorkflowConfig:
     profile_path: Path
     project_root: Path
     dry_run: bool = False
-    non_interactive: bool = False
+    interactive: bool = False  # If True, prompt for extras selection
     download_dir: Path | None = None
+    # New options for Phase One
+    enable_browser: bool = False  # Install Fennec browser
+    enable_play_store: bool = False  # Keep Play Store available
+    keep_vendor_camera: bool = False  # Default: replace with Fossify Camera
+    install_extras: list[str] = field(default_factory=list)  # Explicit app IDs to install
 
 
 @dataclass
@@ -70,6 +75,9 @@ class UserChoices:
     camera_choice: str = ""  # "stock" or "fossify"
     selected_extras_free: list[str] = field(default_factory=list)
     selected_extras_non_free: list[str] = field(default_factory=list)
+    # Derived from config
+    browser_enabled: bool = False
+    play_store_enabled: bool = False
 
 
 # Type for callback functions
@@ -296,22 +304,33 @@ class ConfigurationWorkflow:
             yield self._emit_phase(5, "Camera choice", started=False)
             return
 
-        yield CameraChoiceEvent(
-            type=EventType.CAMERA_CHOICE_REQUIRED,
-            message="Camera choice required",
-            stock_camera_name=stock_camera.name,
-            stock_camera_package=stock_camera.id,
-        )
-
-        if self.config.non_interactive:
-            # In non-interactive mode, default to keeping stock camera
+        # If --keep-vendor-camera flag passed, keep stock camera
+        if self.config.keep_vendor_camera:
             self.choices.camera_choice = "stock"
-        elif self.camera_choice_callback:
+            yield CameraChoiceEvent(
+                type=EventType.CAMERA_CHOICE_MADE,
+                message="Camera choice: stock (--keep-vendor-camera)",
+                stock_camera_name=stock_camera.name,
+                stock_camera_package=stock_camera.id,
+                user_choice="stock",
+            )
+            yield self._emit_phase(5, "Camera choice", started=False)
+            return
+
+        # If interactive mode, prompt user
+        if self.config.interactive and self.camera_choice_callback:
+            yield CameraChoiceEvent(
+                type=EventType.CAMERA_CHOICE_REQUIRED,
+                message="Camera choice required",
+                stock_camera_name=stock_camera.name,
+                stock_camera_package=stock_camera.id,
+            )
             self.choices.camera_choice = self.camera_choice_callback(
                 stock_camera.name, stock_camera.id
             )
         else:
-            self.choices.camera_choice = "stock"
+            # Default: use Fossify Camera (remove vendor camera)
+            self.choices.camera_choice = "fossify"
 
         yield CameraChoiceEvent(
             type=EventType.CAMERA_CHOICE_MADE,
@@ -330,26 +349,41 @@ class ConfigurationWorkflow:
         free_apps = self.catalog.get_all_extras_free()
         non_free_apps = self.catalog.get_all_extras_non_free()
 
-        yield ExtrasSelectionEvent(
-            type=EventType.EXTRAS_SELECTION_REQUIRED,
-            message="Extra apps selection required",
-            available_free=[a.id for a in free_apps],
-            available_non_free=[a.id for a in non_free_apps],
-        )
+        # If explicit extras provided via CLI flags, use those
+        if self.config.install_extras:
+            # Split into free and non-free based on catalog
+            for app_id in self.config.install_extras:
+                if app_id in self.catalog.extras_free:
+                    self.choices.selected_extras_free.append(app_id)
+                elif app_id in self.catalog.extras_non_free:
+                    self.choices.selected_extras_non_free.append(app_id)
+            yield ExtrasSelectionEvent(
+                type=EventType.EXTRAS_SELECTION_MADE,
+                message="Extra apps selected via CLI flags",
+                available_free=[a.id for a in free_apps],
+                available_non_free=[a.id for a in non_free_apps],
+                selected_free=self.choices.selected_extras_free,
+                selected_non_free=self.choices.selected_extras_non_free,
+            )
+            yield self._emit_phase(6, "Selecting extra apps", started=False)
+            return
 
-        if self.config.non_interactive:
-            # In non-interactive mode, use profile defaults
-            self.choices.selected_extras_free = self.profile.apps.extras_free
-            self.choices.selected_extras_non_free = self.profile.apps.extras_non_free
-        elif self.extras_choice_callback:
+        # If interactive mode, prompt user
+        if self.config.interactive and self.extras_choice_callback:
+            yield ExtrasSelectionEvent(
+                type=EventType.EXTRAS_SELECTION_REQUIRED,
+                message="Extra apps selection required",
+                available_free=[a.id for a in free_apps],
+                available_non_free=[a.id for a in non_free_apps],
+            )
             (
                 self.choices.selected_extras_free,
                 self.choices.selected_extras_non_free,
             ) = self.extras_choice_callback(free_apps, non_free_apps)
         else:
-            # Default to profile settings
-            self.choices.selected_extras_free = self.profile.apps.extras_free
-            self.choices.selected_extras_non_free = self.profile.apps.extras_non_free
+            # Non-interactive with no explicit extras: install nothing
+            self.choices.selected_extras_free = []
+            self.choices.selected_extras_non_free = []
 
         yield ExtrasSelectionEvent(
             type=EventType.EXTRAS_SELECTION_MADE,
@@ -362,6 +396,11 @@ class ConfigurationWorkflow:
 
         yield self._emit_phase(6, "Selecting extra apps", started=False)
 
+    # Play Store packages to preserve when enable_play_store is True
+    PLAY_STORE_PACKAGES = frozenset({
+        "com.android.vending",  # Play Store
+    })
+
     def _phase_remove_packages(self) -> Generator[Event, None, None]:
         """Phase 7: Remove packages from the device."""
         yield self._emit_phase(7, "Removing packages")
@@ -372,6 +411,12 @@ class ConfigurationWorkflow:
             conditional_choices["camera"] = True
 
         packages = self.profile.get_packages_to_remove(conditional_choices)
+
+        # If smartphone mode (enable_play_store), don't remove Play Store
+        if self.config.enable_play_store:
+            packages = [p for p in packages if p.id not in self.PLAY_STORE_PACKAGES]
+            self.choices.play_store_enabled = True
+
         remover = PackageRemover(self.adb, dry_run=self.config.dry_run)
 
         gen = remover.remove_packages(packages)
@@ -400,6 +445,11 @@ class ConfigurationWorkflow:
         # Add camera if user chose fossify
         if self.choices.camera_choice == "fossify" and "camera" in self.catalog.extras_free:
             apps_to_install.append(self.catalog.extras_free["camera"])
+
+        # Add browser if enabled
+        if self.config.enable_browser and "browser" in self.catalog.extras_free:
+            apps_to_install.append(self.catalog.extras_free["browser"])
+            self.choices.browser_enabled = True
 
         # Add selected extras
         apps_to_install.extend(

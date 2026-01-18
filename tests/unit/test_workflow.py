@@ -39,7 +39,7 @@ class TestWorkflowConfig:
         )
 
         assert config.dry_run is False
-        assert config.non_interactive is False
+        assert config.interactive is False
         assert config.download_dir is None
 
 
@@ -110,7 +110,6 @@ class TestConfigurationWorkflow:
             profile_path=sample_profile_path,
             project_root=project_root,
             dry_run=True,
-            non_interactive=True,
         )
 
         workflow = ConfigurationWorkflow(config)
@@ -164,7 +163,6 @@ class TestConfigurationWorkflow:
             profile_path=sample_profile_path,
             project_root=project_root,
             dry_run=True,
-            non_interactive=True,
         )
 
         workflow = ConfigurationWorkflow(config)
@@ -211,7 +209,6 @@ class TestConfigurationWorkflow:
         config = WorkflowConfig(
             profile_path=sample_profile_path,
             project_root=project_root,
-            non_interactive=True,
         )
 
         workflow = ConfigurationWorkflow(config)
@@ -230,7 +227,7 @@ class TestConfigurationWorkflow:
         assert any(e.type == EventType.WORKFLOW_FAILED for e in events)
 
     def test_camera_choice_callback(self, project_root: Path, sample_profile_path: Path) -> None:
-        """Should call camera choice callback when not in non-interactive mode."""
+        """Should call camera choice callback when in interactive mode."""
         callback_called = []
 
         def camera_callback(stock_name: str, stock_package: str) -> str:
@@ -240,7 +237,7 @@ class TestConfigurationWorkflow:
         config = WorkflowConfig(
             profile_path=sample_profile_path,
             project_root=project_root,
-            non_interactive=False,
+            interactive=True,
         )
 
         workflow = ConfigurationWorkflow(config, camera_choice_callback=camera_callback)
@@ -248,14 +245,15 @@ class TestConfigurationWorkflow:
         # Verify the callback was stored
         assert workflow.camera_choice_callback is camera_callback
 
-    def test_non_interactive_defaults_to_stock_camera(self) -> None:
-        """In non-interactive mode, should default to stock camera."""
+    def test_non_interactive_defaults_to_fossify_camera(self) -> None:
+        """In non-interactive mode (default), should use Fossify Camera."""
         choices = UserChoices()
-        choices.camera_choice = "stock"
-        assert choices.camera_choice == "stock"
+        choices.camera_choice = "fossify"
+        assert choices.camera_choice == "fossify"
 
-    def test_non_interactive_uses_profile_extras(self) -> None:
-        """In non-interactive mode, should use profile's extras list."""
+    def test_non_interactive_uses_no_extras(self) -> None:
+        """In non-interactive mode without explicit extras, should install no extras."""
         choices = UserChoices()
-        choices.selected_extras_free = ["weather", "music"]
-        assert choices.selected_extras_free == ["weather", "music"]
+        # Default: no extras
+        assert choices.selected_extras_free == []
+        assert choices.selected_extras_non_free == []
