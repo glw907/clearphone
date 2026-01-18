@@ -348,6 +348,7 @@ The phase is complete when:
 | `phase: two` | Olauncher fork |
 | `phase: three` | TUI interface |
 | `phase: four` | Web interface |
+| `design` | Design exploration - generates requirements once research complete |
 
 ### Key Issues
 
@@ -358,9 +359,28 @@ The phase is complete when:
 | #5 | TUI interface | Phase Three |
 | #6 | Configurable Play Store and browser visibility | Phase Two |
 | #7 | Develop configurable Olauncher fork | Phase Two |
+| #9 | Design layered configuration system for app settings | Phase One+ |
 | #14 | Set MMS-friendly defaults in Fossify Messages | Phase One |
 | #17 | Project Roadmap | All |
 | #20 | Set up command line arguments | Phase One |
+
+### Design Documents
+
+Some features require research and design exploration before concrete requirements can be defined. These are tracked as **design document issues** that will generate specific requirements once research is complete.
+
+| Issue | Scope | Status |
+|-------|-------|--------|
+| #9 | App configuration system (Fossify Messages, Olauncher, FUTO Keyboard, etc.) | Research needed |
+
+**Pattern:** Design docs explore complex features with open questions. Once research answers those questions, specific functional requirements are added to this document. This prevents premature requirements for features we don't yet know how to implement.
+
+**Issue #9 covers:**
+- Fossify Messages: MMS settings, carrier-specific APN configuration
+- Olauncher: Hidden apps, home screen layout
+- FUTO Keyboard: Default settings, offline voice configuration
+- Future apps: Universal, device-specific, and carrier-specific configuration layers
+
+FR-1.7.6 (MMS defaults) is the first concrete requirement extracted from #9's scope.
 
 ### Document References
 
