@@ -448,8 +448,9 @@ See [GitHub Issue #17](https://github.com/glw907/clearphone/issues/17) for the f
 |-------|-------|--------|
 | **Phase One** | Core & CLI | In Progress |
 | **Phase Two** | Olauncher fork | Planned |
-| **Phase Three** | TUI interface | Planned |
-| **Phase Four** | Web interface | Planned |
+| **Phase Three** | App configuration | Planned |
+| **Phase Four** | TUI interface | Planned |
+| **Phase Five** | Web interface | Planned |
 
 ### Phase One: Core & CLI
 
@@ -466,13 +467,18 @@ The current focus. Build a working command-line tool that configures Android pho
 - `core/installer.py` — App installation
 - `core/workflow.py` — Orchestration
 - `api/controller.py` — Controller API
-- `cli.py` — Basic CLI structure
+- `cli.py` — CLI with full argument support
+
+**CLI arguments (implemented):**
+- `--interactive`, `--dry-run` — Control modes
+- `--smartphone-mode`, `--clearphone-mode` — Configuration presets
+- `--enable-browser`, `--enable-play-store` — Feature toggles
+- `--keep-vendor-camera` — Camera choice
+- `--install-*` flags for all extras
 
 **Remaining work:**
-- CLI arguments: `--interactive`, `--clearphone-mode`, `--smartphone-mode`, `--install-*` flags
-- Global toggles: `--enable-browser`, `--disable-browser`, etc.
 - Google Pixel 8/8a device profile (#2)
-- MMS defaults configuration (#14)
+- Real device testing and validation
 
 See [docs/requirements.md](docs/requirements.md) for detailed functional requirements.
 
@@ -778,8 +784,9 @@ The tool should:
 
 ## What We're NOT Building (Phase One)
 
-- TUI interface (Phase Three)
-- Web interface (Phase Four)
+- App configuration (Phase Three) — MMS settings, Olauncher layout, keyboard defaults
+- TUI interface (Phase Four)
+- Web interface (Phase Five)
 - Device support beyond S24 and Pixel 8/8a
 - Automated Play Store downloads
 - GUI

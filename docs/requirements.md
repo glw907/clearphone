@@ -85,7 +85,6 @@ This document defines the functional and non-functional requirements for Clearph
 | FR-1.7.3 | Set Fossify Dialer as default phone app | Must | - |
 | FR-1.7.4 | Set Fossify Messages as default SMS app | Must | - |
 | FR-1.7.5 | Set Fossify Gallery as default gallery | Should | - |
-| FR-1.7.6 | Configure MMS-friendly defaults in Fossify Messages | Should | #14 |
 
 #### FR-1.8: CLI Commands
 
@@ -162,35 +161,72 @@ This document defines the functional and non-functional requirements for Clearph
 
 ---
 
-### Phase Three: TUI Interface
+### Phase Three: App Configuration
 
-#### FR-3.1: Terminal UI
+#### FR-3.1: Fossify Messages Configuration
 
 | ID | Requirement | Priority | Issue |
 |----|-------------|----------|-------|
-| FR-3.1.1 | Interactive device profile selection | Must | #5 |
-| FR-3.1.2 | Real-time progress display with rich formatting | Must | #5 |
-| FR-3.1.3 | Interactive camera choice with visual comparison | Must | #5 |
-| FR-3.1.4 | Extras selection with descriptions and categories | Must | #5 |
-| FR-3.1.5 | Error display with recovery options | Should | #5 |
-| FR-3.1.6 | Configuration summary and confirmation | Must | #5 |
-| FR-3.1.7 | Keyboard navigation | Must | #5 |
+| FR-3.1.1 | Configure MMS-friendly defaults | Must | #14 |
+| FR-3.1.2 | Support carrier-specific APN configuration | Should | #9 |
+| FR-3.1.3 | Set default SMS thread view | Should | #9 |
+
+#### FR-3.2: Olauncher Configuration
+
+| ID | Requirement | Priority | Issue |
+|----|-------------|----------|-------|
+| FR-3.2.1 | Configure home screen layout | Should | #9 |
+| FR-3.2.2 | Set hidden apps list | Must | #9 |
+| FR-3.2.3 | Configure app drawer behavior | Should | #9 |
+
+#### FR-3.3: FUTO Keyboard Configuration
+
+| ID | Requirement | Priority | Issue |
+|----|-------------|----------|-------|
+| FR-3.3.1 | Set offline voice input as default | Should | #9 |
+| FR-3.3.2 | Configure keyboard appearance | Could | #9 |
+| FR-3.3.3 | Set language and layout defaults | Should | #9 |
+
+#### FR-3.4: System Configuration
+
+| ID | Requirement | Priority | Issue |
+|----|-------------|----------|-------|
+| FR-3.4.1 | Set minimal notification sounds | Should | #9 |
+| FR-3.4.2 | Configure do-not-disturb defaults | Could | #9 |
+| FR-3.4.3 | Set wallpaper to minimal/plain background | Could | #9 |
+| FR-3.4.4 | Configure display settings (dark mode, timeout) | Could | #9 |
 
 ---
 
-### Phase Four: Web Interface
+### Phase Four: TUI Interface
 
-#### FR-4.1: Web UI
+#### FR-4.1: Terminal UI
 
 | ID | Requirement | Priority | Issue |
 |----|-------------|----------|-------|
-| FR-4.1.1 | Browser-based configuration wizard | Must | - |
-| FR-4.1.2 | Device connection via local server or WebUSB | Must | - |
-| FR-4.1.3 | Profile browser with filtering | Should | - |
-| FR-4.1.4 | Step-by-step guided workflow | Must | - |
-| FR-4.1.5 | Progress visualization | Must | - |
-| FR-4.1.6 | Mobile-friendly responsive design | Should | - |
-| FR-4.1.7 | Self-hosting documentation | Should | - |
+| FR-4.1.1 | Interactive device profile selection | Must | #5 |
+| FR-4.1.2 | Real-time progress display with rich formatting | Must | #5 |
+| FR-4.1.3 | Interactive camera choice with visual comparison | Must | #5 |
+| FR-4.1.4 | Extras selection with descriptions and categories | Must | #5 |
+| FR-4.1.5 | Error display with recovery options | Should | #5 |
+| FR-4.1.6 | Configuration summary and confirmation | Must | #5 |
+| FR-4.1.7 | Keyboard navigation | Must | #5 |
+
+---
+
+### Phase Five: Web Interface
+
+#### FR-5.1: Web UI
+
+| ID | Requirement | Priority | Issue |
+|----|-------------|----------|-------|
+| FR-5.1.1 | Browser-based configuration wizard | Must | - |
+| FR-5.1.2 | Device connection via local server or WebUSB | Must | - |
+| FR-5.1.3 | Profile browser with filtering | Should | - |
+| FR-5.1.4 | Step-by-step guided workflow | Must | - |
+| FR-5.1.5 | Progress visualization | Must | - |
+| FR-5.1.6 | Mobile-friendly responsive design | Should | - |
+| FR-5.1.7 | Self-hosting documentation | Should | - |
 
 ---
 
@@ -316,7 +352,18 @@ The phase is complete when:
 3. Configuration readable from Clearphone settings file
 4. Clearphone CLI installs forked launcher instead of stock Olauncher
 
-### Phase Three: TUI Interface
+### Phase Three: App Configuration
+
+The phase is complete when:
+
+1. Fossify Messages has MMS-friendly defaults configured automatically
+2. Olauncher home screen layout configured with Clearphone defaults
+3. Hidden apps (browser, Play Store in clearphone mode) not visible
+4. FUTO Keyboard offline voice input enabled by default
+5. System sounds and notifications set to minimal/off by default
+6. Configuration applies consistently across fresh installations
+
+### Phase Four: TUI Interface
 
 The phase is complete when:
 
@@ -326,7 +373,7 @@ The phase is complete when:
 4. Rich progress display with colors and spinners
 5. Works in standard terminal emulators (iTerm, GNOME Terminal, Windows Terminal)
 
-### Phase Four: Web Interface
+### Phase Five: Web Interface
 
 The phase is complete when:
 
@@ -346,8 +393,9 @@ The phase is complete when:
 |-------|-------------|
 | `phase: one` | Core & CLI |
 | `phase: two` | Olauncher fork |
-| `phase: three` | TUI interface |
-| `phase: four` | Web interface |
+| `phase: three` | App configuration |
+| `phase: four` | TUI interface |
+| `phase: five` | Web interface |
 | `design` | Design exploration - generates requirements once research complete |
 
 ### Key Issues
@@ -356,11 +404,11 @@ The phase is complete when:
 |-------|-------|-------|
 | #2 | Add Google Pixel 8/8a device profile | Phase One |
 | #3 | Implement direct APK downloads for proprietary apps | Phase One |
-| #5 | TUI interface | Phase Three |
+| #5 | TUI interface | Phase Four |
 | #6 | Configurable Play Store and browser visibility | Phase Two |
 | #7 | Develop configurable Olauncher fork | Phase Two |
-| #9 | Design layered configuration system for app settings | Phase One+ |
-| #14 | Set MMS-friendly defaults in Fossify Messages | Phase One |
+| #9 | Design layered configuration system for app settings | Phase Three |
+| #14 | Set MMS-friendly defaults in Fossify Messages | Phase Three |
 | #17 | Project Roadmap | All |
 | #20 | Set up command line arguments | Phase One |
 
@@ -380,7 +428,7 @@ Some features require research and design exploration before concrete requiremen
 - FUTO Keyboard: Default settings, offline voice configuration
 - Future apps: Universal, device-specific, and carrier-specific configuration layers
 
-FR-1.7.6 (MMS defaults) is the first concrete requirement extracted from #9's scope.
+Issue #9's scope has been formalized as Phase Three: App Configuration requirements (FR-3.x).
 
 ### Document References
 
