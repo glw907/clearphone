@@ -106,7 +106,7 @@ This document defines the functional and non-functional requirements for Clearph
 | FR-1.9.2 | `--disable-browser` - remove Fennec browser | Must | #20 |
 | FR-1.9.3 | `--enable-play-store` - keep Play Store | Must | #20 |
 | FR-1.9.4 | `--disable-play-store` - disable Play Store | Must | #20 |
-| FR-1.9.5 | `--safe-mode` - disable both browser and Play Store | Must | #20 |
+| FR-1.9.5 | `--clearphone-mode` - disable both browser and Play Store | Must | #20 |
 | FR-1.9.6 | `--smartphone-mode` - enable both browser and Play Store | Must | #20 |
 
 #### FR-1.10: CLI App Install Options

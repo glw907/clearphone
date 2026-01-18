@@ -34,18 +34,63 @@ That's it. No ADB installation, no SDK setup, no path configuration.
 3. Run clearphone — it will prompt you to authorize the connection on your phone
 4. Tap "Allow" on your phone's USB debugging prompt
 
-**What happens during setup:**
+## CLI Usage
 
-1. **Camera choice** — Choose between stock camera (better quality) or Fossify Camera (simpler, lower quality)
-2. **Additional apps prompt** — Do you need apps from Play Store? (banking, work apps, etc.)
-   - **If no (default):** Browser and Play Store are disabled immediately
-   - **If yes:** Play Store is kept temporarily — install what you need, then run `clearphone finalize`
-3. **Pre-installed app removal** — Removes Bixby, carrier apps, social media, browser, etc.
-4. **Core apps installation** — Downloads APKs from F-Droid repository and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager
-5. **Optional apps** — Prompts you to choose from extras (open source and proprietary)
-6. **Default configuration** — Sets installed apps as defaults
+### Basic Commands
 
-**Most users don't need the Play Store.** The Clearphone app suite covers essential phone functions, and messaging apps (Signal, WhatsApp, etc.) can be installed directly without Play Store. If you're unsure, choose "no" — you can always factory reset and try again if needed.
+```bash
+clearphone configure <profile>     # Configure a phone
+clearphone list-profiles           # Show available profiles
+clearphone show-profile <profile>  # Show profile details
+```
+
+### Configuration Options
+
+```bash
+# Default: core apps only, no browser, no Play Store (clearphone mode)
+clearphone configure device-profiles/samsung-s24.toml
+
+# Preview changes without making them
+clearphone configure device-profiles/samsung-s24.toml --dry-run
+
+# Interactive mode: guided prompts for extras selection
+clearphone configure device-profiles/samsung-s24.toml --interactive
+
+# Smartphone mode: keep browser and Play Store
+clearphone configure device-profiles/samsung-s24.toml --smartphone-mode
+
+# Install specific extras
+clearphone configure device-profiles/samsung-s24.toml --install-whatsapp --install-weather
+
+# Keep stock camera instead of Fossify Camera
+clearphone configure device-profiles/samsung-s24.toml --keep-vendor-camera
+```
+
+### Global Toggles (for configured phones)
+
+```bash
+clearphone --enable-browser        # Install Fennec browser
+clearphone --disable-browser       # Remove browser
+clearphone --enable-play-store     # Enable Play Store
+clearphone --disable-play-store    # Disable Play Store
+clearphone --clearphone-mode       # Disable both (default)
+clearphone --smartphone-mode       # Enable both
+```
+
+### Available Extras
+
+**FOSS Apps:** `--install-weather`, `--install-music`, `--install-calculator`, `--install-clock`, `--install-notes`, `--install-calendar`, `--install-flashlight`, `--install-maps`
+
+**Proprietary Apps:** `--install-whatsapp`, `--install-signal`, `--install-telegram`, `--install-discord`
+
+## What Happens During Configuration
+
+1. **Pre-installed app removal** — Removes Bixby, carrier apps, social media, stock browser, etc.
+2. **Core apps installation** — Downloads from F-Droid and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager
+3. **Optional apps** — Installs any extras you specified via flags or interactive prompts
+4. **Default configuration** — Sets installed apps as system defaults
+
+**Most users don't need the Play Store.** The Clearphone app suite covers essential phone functions, and messaging apps (Signal, WhatsApp, etc.) can be installed directly. Use `--smartphone-mode` if you need Play Store access.
 
 ## Supported Devices
 
@@ -135,6 +180,7 @@ This enables:
 
 ## Documentation
 
+- `docs/requirements.md` — Functional and non-functional requirements
 - `docs/style-guide.md` — Terminology and writing standards
 - `CLAUDE.md` — Development guide for AI-assisted development
 
