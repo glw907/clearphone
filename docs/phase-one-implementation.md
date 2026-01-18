@@ -44,7 +44,7 @@ class WorkflowConfig:
     # New options
     enable_browser: bool = False  # Install Fennec
     enable_play_store: bool = False  # Keep Play Store
-    keep_vendor_camera: bool = True  # Default: keep stock camera
+    keep_vendor_camera: bool = False  # Default: replace with Fossify Camera
     install_extras: list[str] = field(default_factory=list)  # Explicit app IDs to install
 ```
 
@@ -97,13 +97,13 @@ def _phase_camera_choice(self) -> Generator[Event, None, None]:
         yield self._emit_phase(5, "Camera choice", started=False)
         return
 
-    # If --keep-vendor-camera flag (default), skip choice
+    # If --keep-vendor-camera flag passed, keep stock camera
     if self.config.keep_vendor_camera:
         self.choices.camera_choice = "stock"
         yield self._emit_phase(5, "Camera choice", started=False)
         return
 
-    # Otherwise, prompt or use fossify
+    # Default: use Fossify Camera (remove vendor camera)
     stock_camera = self.profile.get_stock_camera_package()
     # ... rest of existing logic, but check self.config.interactive instead of non_interactive
 ```
@@ -184,7 +184,7 @@ def configure(
     download_dir: Path | None = None,
     enable_browser: bool = False,
     enable_play_store: bool = False,
-    keep_vendor_camera: bool = True,
+    keep_vendor_camera: bool = False,
     install_extras: list[str] | None = None,
     camera_choice_callback: CameraChoiceCallback | None = None,
     extras_choice_callback: ExtrasChoiceCallback | None = None,
@@ -256,7 +256,7 @@ keep_vendor_camera: Annotated[
         "--keep-vendor-camera",
         help="Keep stock camera instead of Fossify Camera",
     ),
-] = True,
+] = False,
 # Individual app install flags
 install_weather: Annotated[bool, typer.Option("--install-weather")] = False,
 install_music: Annotated[bool, typer.Option("--install-music")] = False,
@@ -435,7 +435,7 @@ clearphone clearphone-mode
 
 ## Notes for Implementer
 
-- The `--keep-vendor-camera` defaults to `True` (keep stock camera) - this is the safer default
+- The `--keep-vendor-camera` defaults to `False` (replace with Fossify Camera) - consistent with Clearphone philosophy of FOSS replacements
 - In non-interactive mode with no `--install-*` flags, install **no extras** (core apps only)
 - Stock browsers (Chrome, Samsung Browser) are **always** removed regardless of `--enable-browser`
 - `--enable-browser` installs Fennec; it doesn't preserve stock browsers
