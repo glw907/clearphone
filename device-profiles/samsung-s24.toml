@@ -1,6 +1,10 @@
 # Samsung Galaxy S24 Device Profile
 # Maintainer: @glw907
-# Last updated: 2026-01-16
+# Last updated: 2026-01-17
+#
+# Acknowledgment: Package list informed by Tom4tot's Galaxy-S24-Debloat-Script
+# https://github.com/Tom4tot/Galaxy-S24-Debloat-Script
+# Thank you for the comprehensive research on safe-to-remove packages.
 
 [device]
 model_pattern = "SM-S921*"  # Matches all S24 variants
@@ -306,3 +310,444 @@ function = "Carrier account management"
 category = "vendor"
 action = "remove"
 removal_rationale = "Carrier pre-installed app"
+
+# ============================================================================
+# Additional packages from Tom4tot's Galaxy-S24-Debloat-Script
+# https://github.com/Tom4tot/Galaxy-S24-Debloat-Script
+# ============================================================================
+
+# Samsung Apps - Additional
+[[packages]]
+id = "com.samsung.android.app.find"
+name = "Samsung Find"
+source = "Samsung"
+function = "Find feature"
+category = "vendor"
+action = "remove"
+removal_rationale = "Not essential for minimal phone"
+
+[[packages]]
+id = "com.samsung.android.app.reminder"
+name = "Samsung Reminder"
+source = "Samsung"
+function = "Reminder app"
+category = "vendor"
+action = "remove"
+removal_rationale = "Users can use Fossify Calendar for reminders"
+
+[[packages]]
+id = "com.samsung.android.app.spage"
+name = "Samsung Free"
+source = "Samsung"
+function = "News and content aggregation"
+category = "vendor"
+action = "remove"
+removal_rationale = "Content aggregation is a distraction"
+
+[[packages]]
+id = "com.samsung.android.app.tips"
+name = "Samsung Tips"
+source = "Samsung"
+function = "Tips and tutorials"
+category = "vendor"
+action = "remove"
+removal_rationale = "Not needed after initial setup"
+
+[[packages]]
+id = "com.samsung.android.app.watchmanager"
+name = "Galaxy Wearable"
+source = "Samsung"
+function = "Smartwatch management"
+category = "vendor"
+action = "remove"
+removal_rationale = "Only needed if using Samsung wearables"
+
+[[packages]]
+id = "com.samsung.android.oneconnect"
+name = "SmartThings"
+source = "Samsung"
+function = "Smart home control"
+category = "vendor"
+action = "remove"
+removal_rationale = "Only needed for smart home devices"
+
+[[packages]]
+id = "com.samsung.android.tvplus"
+name = "Samsung TV Plus"
+source = "Samsung"
+function = "Streaming TV service"
+category = "vendor"
+action = "remove"
+removal_rationale = "Streaming service is a distraction"
+
+[[packages]]
+id = "com.samsung.android.voc"
+name = "Samsung Voice Services"
+source = "Samsung"
+function = "Voice services"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of Samsung ecosystem"
+
+[[packages]]
+id = "com.samsung.sree"
+name = "Samsung SREE"
+source = "Samsung"
+function = "Samsung service"
+category = "vendor"
+action = "remove"
+removal_rationale = "Background Samsung service"
+
+[[packages]]
+id = "com.sec.android.app.clockpackage"
+name = "Samsung Clock"
+source = "Samsung"
+function = "Clock and alarms"
+category = "vendor"
+action = "remove"
+removal_rationale = "Replaced by Fossify Clock"
+
+[[packages]]
+id = "com.sec.android.app.kidshome"
+name = "Samsung Kids"
+source = "Samsung"
+function = "Kids mode"
+category = "vendor"
+action = "remove"
+removal_rationale = "Specialized feature not needed for minimal phone"
+
+[[packages]]
+id = "com.sec.android.app.popupcalculator"
+name = "Samsung Calculator"
+source = "Samsung"
+function = "Popup calculator"
+category = "vendor"
+action = "remove"
+removal_rationale = "Replaced by Fossify Calculator"
+
+[[packages]]
+id = "com.sec.android.app.shealth"
+name = "Samsung Health"
+source = "Samsung"
+function = "Health and fitness tracking"
+category = "vendor"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.sec.android.app.voicenote"
+name = "Samsung Voice Recorder"
+source = "Samsung"
+function = "Voice recording"
+category = "vendor"
+action = "remove"
+removal_rationale = "Users can install alternative if needed"
+
+# Samsung System Apps - Additional
+[[packages]]
+id = "com.samsung.android.app.camera.sticker.facearavatar.preload"
+name = "AR Avatar Stickers"
+source = "Samsung"
+function = "AR camera stickers"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of AR ecosystem"
+
+[[packages]]
+id = "com.samsung.android.app.omcagent"
+name = "Configuration Update"
+source = "Samsung"
+function = "Recommended apps service"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pushes app recommendations"
+
+[[packages]]
+id = "com.samsung.android.app.parentalcare"
+name = "Parental Controls"
+source = "Samsung"
+function = "Parental control features"
+category = "vendor"
+action = "remove"
+removal_rationale = "Not needed for minimal phone"
+
+[[packages]]
+id = "com.samsung.android.aremoji"
+name = "AR Emoji"
+source = "Samsung"
+function = "AR emoji creation"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of AR ecosystem"
+
+[[packages]]
+id = "com.samsung.android.aremojieditor"
+name = "AR Emoji Editor"
+source = "Samsung"
+function = "AR emoji editing"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of AR ecosystem"
+
+[[packages]]
+id = "com.samsung.android.bixbyvision.framework"
+name = "Bixby Vision Framework"
+source = "Samsung"
+function = "Bixby vision services"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of Bixby ecosystem"
+
+[[packages]]
+id = "com.samsung.android.fmm"
+name = "Find My Mobile"
+source = "Samsung"
+function = "Device tracking"
+category = "vendor"
+action = "remove"
+removal_rationale = "Samsung tracking service"
+
+[[packages]]
+id = "com.samsung.android.game.gos"
+name = "Game Optimizing Service"
+source = "Samsung"
+function = "Game performance optimization"
+category = "vendor"
+action = "remove"
+removal_rationale = "Not needed for minimal phone"
+
+[[packages]]
+id = "com.samsung.android.ipsgeofence"
+name = "Samsung Visit"
+source = "Samsung"
+function = "Location-based tracking"
+category = "vendor"
+action = "remove"
+removal_rationale = "Location tracking service"
+
+[[packages]]
+id = "com.samsung.android.mapsagent"
+name = "Maps Agent"
+source = "Samsung"
+function = "Maps service"
+category = "vendor"
+action = "remove"
+removal_rationale = "Replaced by OsmAnd"
+
+[[packages]]
+id = "com.samsung.android.mdecservice"
+name = "Call & Text on Other Devices"
+source = "Samsung"
+function = "Cross-device calls and texts"
+category = "vendor"
+action = "remove"
+removal_rationale = "Samsung ecosystem feature"
+
+[[packages]]
+id = "com.samsung.android.mdx"
+name = "Link to Windows"
+source = "Samsung"
+function = "Windows PC integration"
+category = "vendor"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.samsung.android.messaging"
+name = "Samsung Messages"
+source = "Samsung"
+function = "SMS/MMS messaging"
+category = "vendor"
+action = "remove"
+removal_rationale = "Replaced by Fossify Messages"
+
+[[packages]]
+id = "com.samsung.android.rubin.app"
+name = "Customization Service"
+source = "Samsung"
+function = "Phone customization"
+category = "vendor"
+action = "remove"
+removal_rationale = "Samsung customization service"
+
+[[packages]]
+id = "com.samsung.android.samsungpassautofill"
+name = "Samsung Pass Autofill"
+source = "Samsung"
+function = "Password autofill"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of Samsung Pass"
+
+[[packages]]
+id = "com.samsung.android.smartswitchassistant"
+name = "Smart Switch Assistant"
+source = "Samsung"
+function = "Data transfer helper"
+category = "vendor"
+action = "remove"
+removal_rationale = "Only needed during initial setup"
+
+[[packages]]
+id = "com.samsung.android.spayfw"
+name = "Samsung Pay Framework"
+source = "Samsung"
+function = "Samsung Pay services"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of Samsung Pay"
+
+[[packages]]
+id = "com.samsung.android.app.interpreter"
+name = "Interpreter"
+source = "Samsung"
+function = "Real-time translation"
+category = "vendor"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.samsung.android.storyservice"
+name = "Story Service"
+source = "Samsung"
+function = "Gallery story creation"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of Samsung Gallery"
+
+[[packages]]
+id = "com.sec.android.app.billing"
+name = "Samsung Checkout"
+source = "Samsung"
+function = "Samsung payment processing"
+category = "vendor"
+action = "remove"
+removal_rationale = "Samsung commerce service"
+
+[[packages]]
+id = "com.sec.android.easyMover.Agent"
+name = "Smart Switch Agent"
+source = "Samsung"
+function = "Data transfer"
+category = "vendor"
+action = "remove"
+removal_rationale = "Only needed during initial setup"
+
+[[packages]]
+id = "com.sec.android.easyMover"
+name = "Smart Switch"
+source = "Samsung"
+function = "Data transfer"
+category = "vendor"
+action = "remove"
+removal_rationale = "Only needed during initial setup"
+
+[[packages]]
+id = "com.sec.android.mimage.avatarstickers"
+name = "AR Emoji Stickers"
+source = "Samsung"
+function = "AR emoji stickers"
+category = "vendor"
+action = "remove"
+removal_rationale = "Part of AR ecosystem"
+
+# Google Apps - Additional
+[[packages]]
+id = "com.google.android.videos"
+name = "Google TV"
+source = "Google"
+function = "Video streaming"
+category = "google"
+action = "remove"
+removal_rationale = "Streaming service"
+
+[[packages]]
+id = "com.android.chrome"
+name = "Chrome"
+source = "Google"
+function = "Web browser"
+category = "google"
+action = "remove"
+removal_rationale = "Default browserless configuration"
+
+[[packages]]
+id = "com.google.android.apps.tachyon"
+name = "Google Meet"
+source = "Google"
+function = "Video calling"
+category = "google"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.google.android.googlequicksearchbox"
+name = "Google Search"
+source = "Google"
+function = "Search and Google Assistant"
+category = "google"
+action = "remove"
+removal_rationale = "Part of Google ecosystem"
+
+[[packages]]
+id = "com.google.android.projection.gearhead"
+name = "Android Auto"
+source = "Google"
+function = "Car integration"
+category = "google"
+action = "remove"
+removal_rationale = "Users can install if needed"
+
+[[packages]]
+id = "com.google.ar.core"
+name = "Google AR Services"
+source = "Google"
+function = "AR functionality"
+category = "google"
+action = "remove"
+removal_rationale = "Part of AR ecosystem"
+
+# Third-Party Pre-installed Apps
+[[packages]]
+id = "com.amazon.appmanager"
+name = "Amazon App Manager"
+source = "Amazon"
+function = "Amazon services"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pre-installed vendor app"
+
+[[packages]]
+id = "com.amazon.mShop.android.shopping"
+name = "Amazon Shopping"
+source = "Amazon"
+function = "Shopping app"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pre-installed shopping app"
+
+[[packages]]
+id = "com.booking"
+name = "Booking.com"
+source = "Booking"
+function = "Travel booking"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pre-installed vendor app"
+
+[[packages]]
+id = "com.microsoft.office.outlook"
+name = "Microsoft Outlook"
+source = "Microsoft"
+function = "Email client"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pre-installed vendor app"
+
+[[packages]]
+id = "com.microsoft.office.officehubrow"
+name = "Microsoft Office Hub"
+source = "Microsoft"
+function = "Office suite launcher"
+category = "vendor"
+action = "remove"
+removal_rationale = "Pre-installed vendor app"

@@ -177,6 +177,10 @@ Breezy Weather is a beautiful, privacy-focused weather app that provides detaile
 
 OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a low-distraction, privacy-respecting phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
 
+### Tom4tot's Galaxy S24 Debloat Research
+
+The Samsung Galaxy S24 device profile is informed by [Tom4tot's Galaxy-S24-Debloat-Script](https://github.com/Tom4tot/Galaxy-S24-Debloat-Script). Their comprehensive research on which packages can be safely removed saved significant testing time and helped ensure our profile is thorough.
+
 ### adb-shell
 
 The [adb-shell](https://github.com/JeffLIrion/adb_shell) Python library enables Clearphone's zero-dependency approach by providing pure-Python ADB protocol implementation. This eliminates the need for users to install the Android SDK or configure ADB separately.
