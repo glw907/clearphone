@@ -735,10 +735,34 @@ dependencies = [
 | `docs/style-guide.md` | Terminology and writing standards |
 | [Issue #17](https://github.com/glw907/clearphone/issues/17) | Project roadmap with phase checklists |
 | [Issue #20](https://github.com/glw907/clearphone/issues/20) | CLI arguments specification |
+| [Issue #9](https://github.com/glw907/clearphone/issues/9) | App configuration system design (see below) |
 | `device-profiles/samsung-s24.toml` | Samsung S24 device profile |
 | `apps/core.toml` | Core apps catalog |
 | `apps/extras/free.toml` | Optional free apps |
 | `apps/extras/non-free.toml` | Optional proprietary apps |
+
+## Design Documents
+
+Some features require research before we can define concrete requirements. These are tracked as **design document issues** (labeled `design`) that explore open questions and generate specific requirements once research is complete.
+
+**Current design documents:**
+
+| Issue | Scope | Status |
+|-------|-------|--------|
+| [#9](https://github.com/glw907/clearphone/issues/9) | App configuration system | Research needed |
+
+**Issue #9 covers post-install app configuration:**
+- Fossify Messages: MMS settings, carrier-specific APN
+- Olauncher: Hidden apps, home screen layout
+- FUTO Keyboard: Default settings, offline voice
+- Future: Universal, device-specific, and carrier-specific config layers
+
+**Pattern:**
+1. Complex feature needs → Create design issue with `design` label
+2. Research answers open questions → Extract concrete FR-x.x.x requirements to `docs/requirements.md`
+3. All requirements extracted → Close design issue
+
+This prevents defining requirements for features we don't yet know how to implement. See `docs/requirements.md` § "Design Documents" for the full pattern.
 
 ## Success Criteria
 
