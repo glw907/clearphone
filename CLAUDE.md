@@ -32,23 +32,34 @@ The event-driven architecture means all three interfaces consume the same core l
 
 ### User Workflow
 
-**Default behavior:** Clearphone disables both browser and Play Store. The configured phone has no web browser and no app store — just the apps the user chose during setup.
+**Default behavior (clearphone mode):** No browser, no Play Store. The configured phone has just the core apps plus any extras specified via command line flags.
 
-**During setup**, Clearphone asks: "Do you need to install additional apps from Play Store?"
+**Two modes:**
 
-**If no (recommended default):**
-- Browser and Play Store are disabled immediately
-- Single-command setup, no follow-up steps
-- User gets a fully configured, low-distraction phone
+| Mode | Browser | Play Store | Use Case |
+|------|---------|------------|----------|
+| `--clearphone-mode` (default) | Removed | Removed | Low-distraction phone |
+| `--smartphone-mode` | Fennec installed | Kept | Users who need Play Store apps |
 
-**If yes (for users who need banking apps, work apps, etc.):**
-1. Play Store is preserved temporarily
-2. User installs what they need from Play Store
-3. User runs `clearphone finalize` to disable Play Store
+**CLI usage:**
 
-**CLI commands:**
-- `clearphone configure <profile>` — Main configuration (asks about Play Store need)
-- `clearphone finalize` — Disable Play Store after user additions (to be implemented)
+```bash
+# Default: core apps only, no browser, no Play Store
+clearphone configure device-profiles/samsung-s24.toml
+
+# Add specific extras
+clearphone configure device-profiles/samsung-s24.toml --install-whatsapp --install-weather
+
+# Smartphone mode (browser + Play Store)
+clearphone configure device-profiles/samsung-s24.toml --smartphone-mode
+
+# Interactive mode for guided prompts
+clearphone configure device-profiles/samsung-s24.toml --interactive
+
+# Toggle on already-configured phone
+clearphone --enable-browser
+clearphone --smartphone-mode
+```
 
 **Why browserless and appstore-less by default:**
 - Browser is the biggest distraction vector (social media, news, endless scrolling)
@@ -66,11 +77,12 @@ The default Clearphone configuration removes both the web browser and Google Pla
 - **App store = impulse installation.** Without Play Store, users can't impulsively install distracting apps. Every app on the phone was deliberately chosen during setup.
 - **Sufficiency.** Clearphone installs everything most users need. Calls, texts, camera, gallery, maps, weather, music, notes, calculator. Messaging apps (Signal, WhatsApp, Telegram) can be installed directly via APK.
 
-**Future flexibility (planned):**
-For users who need browser/Play Store access but want reduced visibility, we plan to offer a "hidden but available" option — apps remain installed but are hidden from Olauncher's home screen. See GitHub issue #6.
+**Flexibility via CLI flags:**
+- `--smartphone-mode` enables browser and Play Store for users who need them
+- `--enable-browser` / `--disable-browser` toggle browser on configured phones
+- `--enable-play-store` / `--disable-play-store` toggle Play Store
 
-**Implementation note:**
-The setup workflow asks users if they need Play Store access. If no, browser and Play Store are disabled immediately. If yes, Play Store is preserved for user additions, then disabled via `clearphone finalize`.
+**Future:** Hidden but available option — apps installed but hidden from Olauncher home screen. See GitHub issue #6.
 
 ### Minimal External Dependencies
 
@@ -373,16 +385,25 @@ notes = "Official APK download"
 
 ### Device Profile App Selection
 
-Device profiles reference apps by ID. **Note:** `camera` is NOT in the extras list — it's handled via interactive choice prompt.
+Device profiles can specify default extras, but **extras are not installed by default**. Users must explicitly request them via `--interactive` mode or `--install-*` flags.
 
 ```toml
 # device-profiles/samsung-s24.toml
 
 [apps]
-# Core apps are always installed (implicit)
-# Note: "camera" is NOT in this list - it's handled via interactive camera choice prompt
+# Core apps always installed: launcher, keyboard, dialer, messaging, contacts, gallery, files
+# Extras only installed if user requests them via CLI flags
 extras_free = ["weather", "music", "calculator", "clock", "notes", "calendar", "flashlight", "maps"]
 extras_non_free = []
+```
+
+**To install extras:**
+```bash
+# Interactive mode prompts for each extra
+clearphone configure device-profiles/samsung-s24.toml --interactive
+
+# Or specify individual extras
+clearphone configure device-profiles/samsung-s24.toml --install-weather --install-whatsapp
 ```
 
 ## Device Profiles
@@ -419,64 +440,41 @@ conditional = "camera"
 removal_rationale = "Conditionally removed only if user chooses Fossify Camera. Offers better photo quality but has broken gallery links after configuration."
 ```
 
-## Implementation Phases
+## Project Roadmap
 
-Follow these in order. Each phase is testable independently.
+See [GitHub Issue #17](https://github.com/glw907/clearphone/issues/17) for the full roadmap with checklists.
 
-### Phase 1: Foundation (1 day)
+| Phase | Focus | Status |
+|-------|-------|--------|
+| **Phase One** | Core & CLI | In Progress |
+| **Phase Two** | Olauncher fork | Planned |
+| **Phase Three** | TUI interface | Planned |
+| **Phase Four** | Web interface | Planned |
+
+### Phase One: Core & CLI
+
+The current focus. Build a working command-line tool that configures Android phones.
+
+**Core infrastructure (implemented):**
 - `api/events.py` — Event types and dataclasses
 - `core/profile.py` — Device profile TOML parsing, validation
 - `core/apps_catalog.py` — Apps catalog loading and resolution
 - `core/exceptions.py` — Exception hierarchy
+- `core/adb.py` — Pure-Python USB communication
+- `core/downloader.py` — F-Droid and direct APK downloads
+- `core/remover.py` — Package removal with Knox handling
+- `core/installer.py` — App installation
+- `core/workflow.py` — Orchestration
+- `api/controller.py` — Controller API
+- `cli.py` — Basic CLI structure
 
-**Test:** Load `device-profiles/samsung-s24.toml` and `apps/core.toml`, verify all fields parsed and apps resolved.
+**Remaining work:**
+- CLI arguments: `--interactive`, `--clearphone-mode`, `--smartphone-mode`, `--install-*` flags
+- Global toggles: `--enable-browser`, `--disable-browser`, etc.
+- Google Pixel 8/8a device profile (#2)
+- MMS defaults configuration (#14)
 
-### Phase 2: ADB Wrapper (2 days)
-- `core/adb.py` — Pure-Python USB communication via `adb-shell` library
-
-**Test:** Mock `AdbDeviceUsb` and `_ensure_adb_keys()`, verify correct shell commands sent.
-
-### Phase 3: App Download (2 days)
-- `core/downloader.py` — F-Droid index fetch, direct APK download, progress tracking
-
-**Test:** Mock HTTP requests, verify download flow for both sources.
-
-### Phase 4: Package Removal (1 day)
-- `core/remover.py` — Iterate packages, handle failures gracefully
-
-**Test:** Mock ADB responses for success/failure cases.
-
-### Phase 5: Workflow Orchestration (1 day)
-- `core/workflow.py` — Coordinate validation → camera choice → removal → download → install
-
-**Test:** Mock all dependencies, verify event sequences.
-
-### Phase 6: Controller API (0.5 days)
-- `api/controller.py` — Thin wrapper, manages ADB lifecycle
-
-### Phase 7: CLI Interface (2.5 days)
-
-**7.1: Basic CLI Structure (0.5 days)**
-- `cli.py` — Typer commands, Rich output formatting
-- Basic progress display
-
-**7.2: Interactive Camera Choice (0.5 days)**
-- Detect stock camera package in device profile
-- Present camera choice with tradeoffs
-- Store user choice for conditional removal
-
-**7.3: Interactive App Selection (1 day)**
-- Load extras from apps catalog
-- Present each app with description and source (Open Source vs Proprietary)
-- Collect user selections
-- Non-interactive mode: install all free extras, skip non-free
-
-**7.4: Set Default Apps (0.5 days)**
-- Use ADB to set installed apps as defaults
-- Handle launcher, keyboard, dialer, messaging, gallery
-
-### Phase 8: Testing and Polish (2 days)
-- Comprehensive tests, error message review, documentation
+See [docs/requirements.md](docs/requirements.md) for detailed functional requirements.
 
 ## Code Standards
 
@@ -733,7 +731,10 @@ dependencies = [
 
 | Document | Purpose |
 |----------|---------|
+| `docs/requirements.md` | Functional and non-functional requirements |
 | `docs/style-guide.md` | Terminology and writing standards |
+| [Issue #17](https://github.com/glw907/clearphone/issues/17) | Project roadmap with phase checklists |
+| [Issue #20](https://github.com/glw907/clearphone/issues/20) | CLI arguments specification |
 | `device-profiles/samsung-s24.toml` | Samsung S24 device profile |
 | `apps/core.toml` | Core apps catalog |
 | `apps/extras/free.toml` | Optional free apps |
@@ -751,12 +752,12 @@ The tool should:
 6. Show clear progress updates
 7. Provide a summary of successes and failures
 
-## What We're NOT Building (v0.1.0)
+## What We're NOT Building (Phase One)
 
-- TUI interface (next phase)
-- Web interface (future, pending UX expertise)
+- TUI interface (Phase Three)
+- Web interface (Phase Four)
 - Device support beyond S24 and Pixel 8/8a
-- Automated Play Store downloads (we preserve Play Store for user additions, then remove it in finalize phase)
+- Automated Play Store downloads
 - GUI
 - Custom ROM flashing
 - Root-required operations
