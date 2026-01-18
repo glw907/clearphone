@@ -187,14 +187,22 @@ This document defines the functional and non-functional requirements for Clearph
 | FR-3.3.2 | Configure keyboard appearance | Could | #9 |
 | FR-3.3.3 | Set language and layout defaults | Should | #9 |
 
-#### FR-3.4: System Configuration
+#### FR-3.4: Fossify Dialer/Contacts Configuration
 
 | ID | Requirement | Priority | Issue |
 |----|-------------|----------|-------|
-| FR-3.4.1 | Set minimal notification sounds | Should | #9 |
-| FR-3.4.2 | Configure do-not-disturb defaults | Could | #9 |
-| FR-3.4.3 | Set wallpaper to minimal/plain background | Could | #9 |
-| FR-3.4.4 | Configure display settings (dark mode, timeout) | Could | #9 |
+| FR-3.4.1 | Create voicemail contact with carrier-specific number | Should | #9 |
+| FR-3.4.2 | Set voicemail as favorite in dialer | Should | #9 |
+| FR-3.4.3 | Configure speed dial defaults | Could | #9 |
+
+#### FR-3.5: System Configuration
+
+| ID | Requirement | Priority | Issue |
+|----|-------------|----------|-------|
+| FR-3.5.1 | Set minimal notification sounds | Should | #9 |
+| FR-3.5.2 | Configure do-not-disturb defaults | Could | #9 |
+| FR-3.5.3 | Set wallpaper to minimal/plain background | Could | #9 |
+| FR-3.5.4 | Configure display settings (dark mode, timeout) | Could | #9 |
 
 ---
 
@@ -360,8 +368,9 @@ The phase is complete when:
 2. Olauncher home screen layout configured with Clearphone defaults
 3. Hidden apps (browser, Play Store in clearphone mode) not visible
 4. FUTO Keyboard offline voice input enabled by default
-5. System sounds and notifications set to minimal/off by default
-6. Configuration applies consistently across fresh installations
+5. Voicemail contact created and set as favorite in dialer
+6. System sounds and notifications set to minimal/off by default
+7. Configuration applies consistently across fresh installations
 
 ### Phase Four: TUI Interface
 
