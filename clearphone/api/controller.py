@@ -24,7 +24,6 @@ from collections.abc import Generator
 from pathlib import Path
 
 from clearphone.api.events import Event
-from clearphone.core.adb import check_adb_available
 from clearphone.core.apps_catalog import AppsCatalog, load_apps_catalog
 from clearphone.core.profile import DeviceProfile, load_profile
 from clearphone.core.workflow import (
@@ -55,11 +54,6 @@ class ConfigurationController:
             List of error messages (empty if all prerequisites met)
         """
         errors: list[str] = []
-
-        if not check_adb_available():
-            errors.append(
-                "ADB not found. Install Android SDK Platform Tools and ensure 'adb' is in PATH."
-            )
 
         apps_dir = self.project_root / "apps"
         if not apps_dir.exists():

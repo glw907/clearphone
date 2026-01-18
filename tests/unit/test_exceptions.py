@@ -18,10 +18,10 @@
 
 from clearphone.core.exceptions import (
     ADBCommandError,
-    ADBNotFoundError,
     AppNotFoundError,
     ClearphoneError,
     CriticalConfigurationError,
+    DeviceAuthenticationError,
     DeviceMismatchError,
     DownloadError,
     KnoxProtectedError,
@@ -29,6 +29,7 @@ from clearphone.core.exceptions import (
     ProfileNotFoundError,
     ProfileParseError,
     RemovalError,
+    USBError,
 )
 
 
@@ -104,11 +105,18 @@ class TestDeviceMismatchError:
 class TestADBErrors:
     """Tests for ADB-related errors."""
 
-    def test_adb_not_found(self) -> None:
-        """ADBNotFoundError should have installation suggestion."""
-        error = ADBNotFoundError()
-        assert "ADB not found" in str(error)
-        assert "Platform Tools" in str(error)
+    def test_usb_error(self) -> None:
+        """USBError should have troubleshooting suggestions."""
+        error = USBError("Connection refused")
+        assert "USB communication error" in str(error)
+        assert "Connection refused" in str(error)
+        assert error.details == "Connection refused"
+
+    def test_device_authentication_error(self) -> None:
+        """DeviceAuthenticationError should have authorization steps."""
+        error = DeviceAuthenticationError()
+        assert "authentication failed" in str(error)
+        assert "Allow USB debugging" in str(error)
 
     def test_no_device_connected(self) -> None:
         """NoDeviceConnectedError should have connection steps."""

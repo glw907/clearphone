@@ -48,7 +48,7 @@ class TestPackageRemover:
                 name="Bixby Voice",
                 source="Samsung",
                 function="Voice assistant",
-                category="bloatware",
+                category="vendor",
                 action="remove",
             )
         ]
@@ -143,7 +143,7 @@ class TestPackageRemover:
                 name="Bixby Voice",
                 source="Samsung",
                 function="Voice assistant",
-                category="bloatware",
+                category="vendor",
                 action="remove",
             )
         ]
@@ -170,7 +170,7 @@ class TestPackageRemover:
                 name="Bixby Voice",
                 source="Samsung",
                 function="Voice assistant",
-                category="bloatware",
+                category="vendor",
                 action="remove",
             )
         ]
@@ -203,7 +203,7 @@ class TestPackageRemover:
                 name="Bixby",
                 source="Samsung",
                 function="Assistant",
-                category="bloatware",
+                category="vendor",
                 action="remove",
             ),
             PackageToRemove(
@@ -211,7 +211,7 @@ class TestPackageRemover:
                 name="Facebook",
                 source="Meta",
                 function="Social",
-                category="bloatware",
+                category="vendor",
                 action="remove",
             ),
             PackageToRemove(

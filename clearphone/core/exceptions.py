@@ -136,14 +136,28 @@ class ADBError(ClearphoneError):
     """Base class for ADB-related errors."""
 
 
-class ADBNotFoundError(ADBError):
-    """ADB executable not found on the system."""
+class USBError(ADBError):
+    """USB communication error with the device."""
+
+    def __init__(self, details: str) -> None:
+        super().__init__(
+            message=f"USB communication error: {details}",
+            suggestion="1. Ensure the device is connected via USB\n"
+            "2. Try a different USB port or cable\n"
+            "3. On Linux, you may need to set up udev rules for your device",
+        )
+        self.details = details
+
+
+class DeviceAuthenticationError(ADBError):
+    """Device rejected the connection (RSA key not authorized)."""
 
     def __init__(self) -> None:
         super().__init__(
-            message="ADB not found",
-            suggestion="Install Android SDK Platform Tools and ensure 'adb' is in your PATH.\n"
-            "Download from: https://developer.android.com/studio/releases/platform-tools",
+            message="Device authentication failed",
+            suggestion="1. Check your device for an 'Allow USB debugging' prompt\n"
+            "2. Tap 'Allow' (optionally check 'Always allow from this computer')\n"
+            "3. Try running clearphone again",
         )
 
 

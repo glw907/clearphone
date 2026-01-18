@@ -16,7 +16,7 @@
 
 """Core modules for Clearphone."""
 
-from clearphone.core.adb import ADBDevice, ADBResult, check_adb_available
+from clearphone.core.adb import ADBDevice, ADBResult
 from clearphone.core.apps_catalog import AppDefinition, AppsCatalog, load_apps_catalog
 from clearphone.core.downloader import APKDownloader, FDroidIndex
 from clearphone.core.exceptions import (
@@ -37,7 +37,6 @@ __all__ = [
     # ADB
     "ADBDevice",
     "ADBResult",
-    "check_adb_available",
     # Apps catalog
     "AppDefinition",
     "AppsCatalog",

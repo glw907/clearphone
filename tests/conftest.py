@@ -66,19 +66,8 @@ def mock_adb_device() -> MagicMock:
     mock.set_default_sms.return_value = MagicMock(success=True, stderr="")
     mock.set_default_keyboard.return_value = MagicMock(success=True, stderr="")
     mock.set_default_gallery.return_value = MagicMock(success=True, stderr="")
+    mock.close.return_value = None
 
-    return mock
-
-
-@pytest.fixture
-def mock_subprocess_run() -> MagicMock:
-    """Create a mock for subprocess.run."""
-    mock = MagicMock()
-    mock.return_value = MagicMock(
-        returncode=0,
-        stdout="",
-        stderr="",
-    )
     return mock
 
 
@@ -145,7 +134,7 @@ id = "com.samsung.android.bixby.agent"
 name = "Bixby Voice"
 source = "Samsung"
 function = "Voice assistant"
-category = "bloatware"
+category = "vendor"
 action = "remove"
 removal_rationale = "Replaced by user's preferred apps"
 

@@ -2,16 +2,18 @@
 
 **Transform your Android smartphone into a minimal, low-distraction device.**
 
-Clearphone removes bloatware and installs privacy-focused open-source alternatives, giving you a phone that respects your attention and your privacy.
+Clearphone removes pre-installed apps and installs privacy-focused open-source alternatives, giving you a phone that respects your attention and your privacy.
 
 ## What It Does
 
-- **Removes bloatware**: Bixby, Samsung/Google/carrier pre-installed apps
+- **Removes pre-installed apps**: Bixby, Samsung/Google/carrier apps, browser, and Play Store
+- **Browserless and appstore-less by default**: No web browser, no app store — just the apps you need
 - **Installs FOSS replacements**: Launcher, keyboard, dialer, messaging, contacts, gallery, file manager
 - **Camera choice**: Keep your high-quality stock camera or install Fossify Camera for simpler integration
 - **Optional extras**: Weather, music, calculator, calendar, maps, and more
 - **Optional proprietary apps**: WhatsApp, Signal, Telegram, Discord (direct APK downloads, no Play Store)
-- **No root required**: Uses ADB commands that work on locked bootloaders
+- **No root required**: Works on locked bootloaders
+- **Zero external dependencies**: No need to install ADB or Android SDK separately
 
 ## Quick Start
 
@@ -20,18 +22,30 @@ Clearphone removes bloatware and installs privacy-focused open-source alternativ
 pip install clearphone
 
 # Connect phone via USB (enable USB debugging first)
-adb devices
-
 # Configure your phone
 clearphone configure device-profiles/samsung-s24.toml
 ```
 
-**What happens:**
-1. **Camera choice** — Choose between stock camera (better quality, broken gallery links) or Fossify Camera (simpler, lower quality)
-2. **Package removal** — Removes bloatware and conditionally removes stock camera if you chose Fossify
-3. **Core apps installation** — Downloads APKs from F-Droid repository and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager via ADB
-4. **Optional apps** — Prompts you to choose from extras (open source and proprietary)
-5. **Default configuration** — Sets installed apps as defaults
+That's it. No ADB installation, no SDK setup, no path configuration.
+
+**First-time setup:**
+1. Enable USB debugging on your phone (Settings → Developer Options → USB debugging)
+2. Connect your phone via USB
+3. Run clearphone — it will prompt you to authorize the connection on your phone
+4. Tap "Allow" on your phone's USB debugging prompt
+
+**What happens during setup:**
+
+1. **Camera choice** — Choose between stock camera (better quality) or Fossify Camera (simpler, lower quality)
+2. **Additional apps prompt** — Do you need apps from Play Store? (banking, work apps, etc.)
+   - **If no (default):** Browser and Play Store are disabled immediately
+   - **If yes:** Play Store is kept temporarily — install what you need, then run `clearphone finalize`
+3. **Pre-installed app removal** — Removes Bixby, carrier apps, social media, browser, etc.
+4. **Core apps installation** — Downloads APKs from F-Droid repository and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager
+5. **Optional apps** — Prompts you to choose from extras (open source and proprietary)
+6. **Default configuration** — Sets installed apps as defaults
+
+**Most users don't need the Play Store.** The Clearphone app suite covers essential phone functions, and messaging apps (Signal, WhatsApp, etc.) can be installed directly without Play Store. If you're unsure, choose "no" — you can always factory reset and try again if needed.
 
 ## Supported Devices
 
@@ -51,17 +65,49 @@ clearphone configure device-profiles/samsung-s24.toml
 Modern smartphones come loaded with apps you didn't ask for and can't remove. Carriers, manufacturers, and platform providers all want your attention and your data. Clearphone gives you a phone that serves you, not them.
 
 **What makes Clearphone different:**
-- Device profiles maintained by real users testing on real hardware
-- Shared apps catalog — no duplication across profiles
-- Interactive camera choice with honest tradeoff explanation
-- Continue on recoverable errors — better to complete with warnings than fail entirely
-- Event-driven architecture — same core logic for CLI, TUI, and future web interface
+- **Zero-configuration install** — `pip install clearphone` and you're ready. No SDK, no ADB, no path setup.
+- **Device profiles** maintained by real users testing on real hardware
+- **Shared apps catalog** — no duplication across profiles
+- **Interactive camera choice** with honest tradeoff explanation
+- **Continue on recoverable errors** — better to complete with warnings than fail entirely
+- **Event-driven architecture** — same core logic for CLI, TUI, and future web interface
+
+## Design Philosophy
+
+### Browserless and Appstore-less by Default
+
+A Clearphone-configured device has **no web browser and no app store** by default. This is intentional:
+
+- **The browser is the biggest distraction vector.** Social media, news, shopping, endless scrolling — it all happens through the browser. Removing it eliminates the temptation entirely.
+- **The app store enables impulse installs.** Without it, you can't impulsively download distracting apps. Every app on your phone is there because you deliberately chose it during setup.
+- **You don't need them.** Clearphone installs everything most people need: calls, texts, camera, maps, music, weather. Messaging apps (Signal, WhatsApp) can be installed directly without Play Store.
+
+**For users who need more flexibility**, Clearphone will offer an option to keep the browser and/or Play Store available but hidden from the home screen (planned feature). This provides a middle ground between full lockdown and unrestricted access.
+
+### Minimal External Dependencies
+
+Clearphone aims for the simplest possible installation experience. We bundle or implement everything needed to communicate with your phone:
+
+- **No ADB binary required** — We use a pure-Python USB implementation to communicate directly with your device
+- **No Android SDK required** — Everything is self-contained
+- **No system-level configuration** — No udev rules (Linux), no driver installation (Windows), no special setup
+- **Single command install** — `pip install clearphone` includes everything
+
+This means a user can go from "never heard of Clearphone" to "configuring their phone" in under a minute.
+
+### Rootless Operation
+
+Uses `pm uninstall --user 0`, which works on locked bootloaders and is safer than root operations. Your phone's warranty and security model remain intact.
+
+### Honest Tradeoffs
+
+We don't pretend everything is perfect. When you choose between stock camera and Fossify Camera, we tell you exactly what you gain and lose with each option.
 
 ## Key Design Decisions
 
-**Rootless ADB only** — Uses `pm uninstall --user 0`, which works on locked bootloaders and is safer than root operations.
+**Pure-Python USB communication** — Connects directly to your phone via USB using the `adb-shell` library. No external ADB binary needed. RSA keys for device authentication are generated automatically and stored in `~/.clearphone/`.
 
-**F-Droid Repository + Direct APK Downloads** — Open-source apps downloaded from F-Droid's repository; proprietary apps downloaded from official sources. All apps installed via ADB. No F-Droid app or Google Play required.
+**F-Droid Repository + Direct APK Downloads** — Open-source apps downloaded from F-Droid's repository; proprietary apps downloaded from official sources. No F-Droid app or Google Play required.
 
 **Device maintainer model** — Each profile has a dedicated maintainer who tests on real hardware and keeps it current.
 
@@ -89,11 +135,6 @@ This enables:
 
 ## Documentation
 
-- `docs/requirements.md` — Scope and constraints
-- `docs/implementation-order.md` — Phase-by-phase build plan
-- `docs/profile-schema.md` — Device profile TOML structure
-- `docs/apps-catalog-schema.md` — Apps catalog TOML structure
-- `docs/cli-spec.md` — CLI output formats
 - `docs/style-guide.md` — Terminology and writing standards
 - `CLAUDE.md` — Development guide for AI-assisted development
 
@@ -135,6 +176,10 @@ Breezy Weather is a beautiful, privacy-focused weather app that provides detaile
 ### OsmAnd & OpenStreetMap
 
 OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a low-distraction, privacy-respecting phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
+
+### adb-shell
+
+The [adb-shell](https://github.com/JeffLIrion/adb_shell) Python library enables Clearphone's zero-dependency approach by providing pure-Python ADB protocol implementation. This eliminates the need for users to install the Android SDK or configure ADB separately.
 
 ### Proprietary Software Vendors
 

@@ -119,7 +119,7 @@ class TestRealProfileLoading:
         profile_path = project_root / "device-profiles" / "samsung-s24.toml"
         profile = load_profile(profile_path)
 
-        valid_categories = {"bloatware", "google", "system", "carrier"}
+        valid_categories = {"vendor", "google", "system", "carrier"}
 
         for pkg in profile.packages:
             assert pkg.category in valid_categories, (

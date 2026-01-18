@@ -6,17 +6,17 @@ This document is for developers working on Clearphone, particularly when using C
 
 ## Project Overview
 
-Clearphone transforms Android smartphones into minimal, low-distraction devices by removing bloatware and installing privacy-focused alternatives.
+Clearphone transforms Android smartphones into minimal, low-distraction devices by removing pre-installed apps and installing privacy-focused alternatives.
 
 **Current version:** 0.1.0 (CLI prototype)
 **Target devices:** Samsung Galaxy S24, Google Pixel 8/8a
 **Interface:** Command-line only
 **App sources:** F-Droid repository (open source APKs), direct APK downloads (proprietary)
-**Installation method:** ADB (no F-Droid app or Play Store required)
+**Installation method:** Direct USB communication (no external ADB binary or Play Store required)
 
 ### Why Two Devices?
 
-**Samsung Galaxy S24** — Stress test. One UI adds substantial bloatware: Bixby ecosystem, Samsung apps, carrier installers, pre-loaded social media. If the tool handles Samsung's complexity, it can handle anything.
+**Samsung Galaxy S24** — Stress test. One UI adds substantial pre-installed apps: Bixby ecosystem, Samsung apps, carrier installers, social media. If the tool handles Samsung's complexity, it can handle anything.
 
 **Google Pixel 8/8a** — Production target. Stock Android with minimal manufacturer additions, available at reasonable cost. This is the intended hardware for real-world deployment.
 
@@ -30,19 +30,94 @@ The dual-device strategy validates that the profile-based approach works across 
 
 The event-driven architecture means all three interfaces consume the same core logic—no duplication.
 
+### User Workflow
+
+**Default behavior:** Clearphone disables both browser and Play Store. The configured phone has no web browser and no app store — just the apps the user chose during setup.
+
+**During setup**, Clearphone asks: "Do you need to install additional apps from Play Store?"
+
+**If no (recommended default):**
+- Browser and Play Store are disabled immediately
+- Single-command setup, no follow-up steps
+- User gets a fully configured, low-distraction phone
+
+**If yes (for users who need banking apps, work apps, etc.):**
+1. Play Store is preserved temporarily
+2. User installs what they need from Play Store
+3. User runs `clearphone finalize` to disable Play Store
+
+**CLI commands:**
+- `clearphone configure <profile>` — Main configuration (asks about Play Store need)
+- `clearphone finalize` — Disable Play Store after user additions (to be implemented)
+
+**Why browserless and appstore-less by default:**
+- Browser is the biggest distraction vector (social media, news, endless scrolling)
+- App store enables impulse installs
+- Most users don't need them — Clearphone provides calls, texts, camera, maps, music, weather, and messaging apps can be installed directly
+
+## Design Philosophy
+
+### Browserless and Appstore-less by Default
+
+The default Clearphone configuration removes both the web browser and Google Play Store. This is the core value proposition, not a limitation.
+
+**Rationale:**
+- **Browser = primary distraction vector.** Social media, news, shopping, Reddit, YouTube — all accessible via browser. Removing it eliminates the most common distraction pathway.
+- **App store = impulse installation.** Without Play Store, users can't impulsively install distracting apps. Every app on the phone was deliberately chosen during setup.
+- **Sufficiency.** Clearphone installs everything most users need. Calls, texts, camera, gallery, maps, weather, music, notes, calculator. Messaging apps (Signal, WhatsApp, Telegram) can be installed directly via APK.
+
+**Future flexibility (planned):**
+For users who need browser/Play Store access but want reduced visibility, we plan to offer a "hidden but available" option — apps remain installed but are hidden from Olauncher's home screen. See GitHub issue #6.
+
+**Implementation note:**
+The setup workflow asks users if they need Play Store access. If no, browser and Play Store are disabled immediately. If yes, Play Store is preserved for user additions, then disabled via `clearphone finalize`.
+
+### Minimal External Dependencies
+
+The core philosophy is **zero-friction installation**. A user should go from "never heard of Clearphone" to "configuring their phone" with a single `pip install clearphone` command.
+
+**What this means in practice:**
+- **No ADB binary required** — We use the `adb-shell` library for pure-Python USB communication
+- **No Android SDK required** — Everything is self-contained in the Python package
+- **No system configuration** — No udev rules, no driver installation, no PATH setup
+- **Automatic key management** — RSA keys for device authentication are generated automatically in `~/.clearphone/`
+
+**Why this matters:**
+- Reduces support burden (no "ADB not found" issues)
+- Makes the tool accessible to less technical users
+- Enables future packaging as standalone executables (PyInstaller, etc.)
+
+### Honest Tradeoffs
+
+We don't hide complexity or pretend everything is perfect. When there's a tradeoff, we explain it clearly:
+- Camera choice: stock (better quality, broken links) vs Fossify (simpler, lower quality)
+- Knox-protected packages: explain why they can't be removed rather than silently skipping
+
+### Event-Driven Architecture
+
+All core logic communicates through events, enabling multiple interfaces (CLI, TUI, web) without code duplication.
+
 ## Quick Start
 
 ```bash
-# Read specifications
-cat docs/requirements.md          # What we're building
-cat docs/implementation-order.md  # Build sequence
-
 # Run tests
 pytest tests/
 
 # Format code
 ruff check --fix .
 ruff format .
+
+# Type check
+mypy clearphone/
+
+# Install locally for development
+pip install -e ".[dev]"
+
+# Try the CLI
+clearphone --help
+clearphone list-profiles
+clearphone show-profile device-profiles/samsung-s24.toml
+clearphone configure device-profiles/samsung-s24.toml --dry-run
 ```
 
 ## Architecture
@@ -94,10 +169,10 @@ clearphone/
 
 ### Key Classes
 
-**`DeviceProfile`** — Parses and validates device profile TOML files  
-**`AppsCatalog`** — Loads and resolves the shared apps catalog  
-**`ADBDevice`** — Wraps ADB commands with error handling  
-**`ConfigurationController`** — Entry point for all UIs  
+**`DeviceProfile`** — Parses and validates device profile TOML files
+**`AppsCatalog`** — Loads and resolves the shared apps catalog
+**`ADBDevice`** — Pure-Python USB communication with Android devices (no external ADB binary)
+**`ConfigurationController`** — Entry point for all UIs
 **`ConfigurationWorkflow`** — Orchestrates the full process
 
 ## Apps Catalog
@@ -357,9 +432,9 @@ Follow these in order. Each phase is testable independently.
 **Test:** Load `device-profiles/samsung-s24.toml` and `apps/core.toml`, verify all fields parsed and apps resolved.
 
 ### Phase 2: ADB Wrapper (2 days)
-- `core/adb.py` — Command execution, output parsing, error handling
+- `core/adb.py` — Pure-Python USB communication via `adb-shell` library
 
-**Test:** Mock `subprocess.run()`, verify correct commands generated.
+**Test:** Mock `AdbDeviceUsb` and `_ensure_adb_keys()`, verify correct shell commands sent.
 
 ### Phase 3: App Download (2 days)
 - `core/downloader.py` — F-Droid index fetch, direct APK download, progress tracking
@@ -520,13 +595,14 @@ To configure this device:
 ```python
 from unittest.mock import patch, MagicMock
 
-@patch('subprocess.run')
-def test_package_removal(mock_run):
-    mock_run.return_value = MagicMock(
-        returncode=0,
-        stdout="Success",
-        stderr=""
-    )
+@patch('clearphone.core.adb.AdbDeviceUsb')
+@patch('clearphone.core.adb._ensure_adb_keys')
+def test_device_connection(mock_keys, mock_usb_class):
+    mock_keys.return_value = MagicMock()
+    mock_device = MagicMock()
+    mock_device.available = True
+    mock_device.shell.return_value = "Success"
+    mock_usb_class.return_value = mock_device
     # Test code here
 ```
 
@@ -548,6 +624,22 @@ def test_package_removal(mock_run):
 
 ## Key Design Decisions
 
+### Pure-Python USB Communication
+
+We use the `adb-shell` library for direct USB communication with Android devices. This eliminates the need for users to install the Android SDK or ADB binary separately.
+
+**How it works:**
+- RSA keys are generated automatically on first run (stored in `~/.clearphone/adbkey`)
+- Device communicates directly via USB using the ADB protocol
+- User sees a one-time "Allow USB debugging" prompt on their phone
+- All shell commands are sent directly, no subprocess calls
+
+**Why not shell out to `adb`:**
+- Requires user to install Android SDK or Platform Tools
+- PATH configuration issues are a common support burden
+- Different behavior across platforms (Windows driver issues, Linux udev rules)
+- Makes standalone packaging (PyInstaller) difficult
+
 ### Shared Apps Catalog
 
 Apps are defined once in `apps/` and referenced by ID in device profiles. This:
@@ -562,7 +654,7 @@ Present camera choice BEFORE package removal:
 - Fossify Camera: Simpler integration, lower photo quality
 - Use `conditional = "camera"` field to remove stock camera only if user chooses Fossify
 
-### Rootless ADB Only
+### Rootless Operation
 
 Uses `pm uninstall --user 0` (no root required). Works on locked bootloaders, safer than root operations.
 
@@ -582,33 +674,38 @@ Device profiles define everything. No settings, no options, no "just this once."
 
 Each profile has a dedicated maintainer. This ensures profiles stay current and someone is accountable for device-specific issues.
 
-## ADB Command Reference
+## Shell Commands Reference
 
-```bash
-# Device info
-adb shell getprop ro.product.model
-adb shell getprop ro.build.version.release
+These are the Android shell commands sent via the `adb-shell` library. Understanding them helps with debugging and testing.
+
+```python
+# Device info (via ADBDevice._shell())
+"getprop ro.product.model"
+"getprop ro.build.version.release"
+"getprop ro.product.manufacturer"
+"getprop ro.serialno"
 
 # Package management
-adb shell pm list packages
-adb shell pm uninstall --user 0 <package-id>
-adb shell pm disable-user --user 0 <package-id>
+"pm list packages"
+"pm uninstall --user 0 <package-id>"
+"pm disable-user --user 0 <package-id>"
 
-# App installation
-adb install <path-to-apk>
-adb install -r <path-to-apk>  # Overwrite existing
+# App installation (push APK first, then install)
+"pm install -r /data/local/tmp/<filename>.apk"
+"rm /data/local/tmp/<filename>.apk"  # Cleanup
 
 # Set default apps
-adb shell cmd role add-role-holder android.app.role.HOME <launcher-package>
-adb shell settings put secure default_input_method <keyboard-package>
-
-# Connection
-adb devices
-adb wait-for-device
-adb kill-server
+"cmd role add-role-holder android.app.role.HOME <launcher-package>"
+"cmd role add-role-holder android.app.role.DIALER <dialer-package>"
+"cmd role add-role-holder android.app.role.SMS <sms-package>"
+"cmd role add-role-holder android.app.role.GALLERY <gallery-package>"
+"settings put secure default_input_method <keyboard-package>/.LatinIME"
 ```
 
-Always use `--user 0` for package operations. Parse both stdout and stderr—some commands return exit code 0 on failure.
+**Important notes:**
+- Always use `--user 0` for package operations
+- Some commands return exit code 0 on failure—check output for "Success" or "Failure"
+- APK installation requires pushing the file to `/data/local/tmp/` first, then running `pm install`
 
 ## Dependencies
 
@@ -619,44 +716,47 @@ dependencies = [
     "typer[all]>=0.9.0",
     "rich>=13.0.0",
     "httpx>=0.27.0",
+    "toml>=0.10.2",
+    "adb-shell[usb]>=0.4.0",   # Pure-Python USB communication
+    "pycryptodome>=3.9.0",     # RSA key operations for device auth
 ]
 ```
+
+**Why these dependencies:**
+- `typer` + `rich` — CLI framework with beautiful output
+- `httpx` — Modern async HTTP client for F-Droid downloads
+- `toml` — Profile and catalog parsing
+- `adb-shell[usb]` — Direct USB communication with Android (no ADB binary needed)
+- `pycryptodome` — RSA key generation for device authentication
 
 ## Specifications Reference
 
 | Document | Purpose |
 |----------|---------|
-| `docs/requirements.md` | Scope and constraints |
-| `docs/implementation-order.md` | Phase-by-phase build plan |
-| `docs/api-spec.md` | Event system and controller |
-| `docs/profile-schema.md` | Device profile TOML structure |
-| `docs/apps-catalog-schema.md` | Apps catalog TOML structure |
-| `docs/adb-commands.md` | ADB command reference |
-| `docs/fdroid-integration.md` | F-Droid download implementation |
-| `docs/direct-apk-integration.md` | Direct APK download security |
-| `docs/error-handling.md` | All error scenarios |
-| `docs/cli-spec.md` | CLI output formats |
 | `docs/style-guide.md` | Terminology and writing standards |
+| `device-profiles/samsung-s24.toml` | Samsung S24 device profile |
+| `apps/core.toml` | Core apps catalog |
+| `apps/extras/free.toml` | Optional free apps |
+| `apps/extras/non-free.toml` | Optional proprietary apps |
 
 ## Success Criteria
 
 The tool should:
 
-1. Install cleanly (`pip install .`)
-2. Connect to Samsung S24 or Pixel 8/8a via USB
+1. Install with a single command (`pip install clearphone`) — no ADB, no SDK
+2. Connect to Samsung S24 or Pixel 8/8a via USB (user approves once on device)
 3. Present camera choice with honest tradeoffs
 4. Run `clearphone configure device-profiles/<device>.toml`
 5. Prompt for optional apps with descriptions
 6. Show clear progress updates
-7. Complete configuration in 15–30 minutes
-8. Provide a summary of successes and failures
+7. Provide a summary of successes and failures
 
 ## What We're NOT Building (v0.1.0)
 
 - TUI interface (next phase)
 - Web interface (future, pending UX expertise)
 - Device support beyond S24 and Pixel 8/8a
-- Play Store integration
+- Automated Play Store downloads (we preserve Play Store for user additions, then remove it in finalize phase)
 - GUI
 - Custom ROM flashing
 - Root-required operations

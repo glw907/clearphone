@@ -16,23 +16,24 @@ Clearphone creates **low-distraction, privacy-respecting phones**. All writing s
 | low-distraction phone | minimal phone, dumb phone | Describes the goal |
 | privacy-respecting phone | private phone, secure phone | Accurate without overclaiming |
 | remove | block, disable, kill | Accurate—we uninstall for user 0 |
-| pre-installed apps | bloatware (in user-facing docs) | More neutral for general audience |
+| pre-installed apps | bloatware | Neutral, professional, non-pejorative |
+| vendor apps | bloatware (as category) | For device profiles, use "vendor" as category name |
 | replacement apps | alternative apps | Emphasizes the swap |
 
 ### Terms to Avoid
 
 | Avoid | Reason |
 |-------|--------|
+| bloatware | Pejorative and unprofessional; use "pre-installed apps" everywhere |
 | de-Google, Google-free | Inaccurate (Google develops Android) and unnecessarily adversarial |
 | escaping [company]'s ecosystem | Sounds adversarial toward potential partners |
-| bloatware (in formal docs) | Use "pre-installed apps" in user-facing content; "bloatware" is acceptable in technical/developer contexts like device profiles |
 | safe, secure (as absolutes) | Overclaims—we improve privacy, we don't guarantee security |
 
 ### Acceptable in Context
 
-- **bloatware**: Acceptable in device profiles, CLAUDE.md, and developer documentation where technical accuracy matters
 - **Samsung/Google/carrier apps**: Fine to name specific sources factually
 - **open-source alternatives**: Accurate description of what we install
+- **vendor apps**: Used in device profiles as a category for manufacturer/third-party pre-installed apps
 
 ## Tone
 
@@ -61,7 +62,7 @@ You specified a wrong profile path!
 
 - **README.md**: General audience, avoid jargon
 - **CLAUDE.md**: Developers and AI assistants, technical language fine
-- **Device profiles**: Technical, "bloatware" is acceptable
+- **Device profiles**: Technical, use "vendor" category instead of "bloatware"
 - **CLI output**: Brief, friendly, clear
 
 ## Examples

@@ -99,7 +99,7 @@ class TestPackageEvent:
             message="Removed Bixby",
             package_id="com.samsung.bixby",
             package_name="Bixby",
-            reason="Bloatware",
+            reason="Pre-installed app",
         )
         assert event.package_id == "com.samsung.bixby"
         assert event.package_name == "Bixby"

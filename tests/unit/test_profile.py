@@ -40,7 +40,7 @@ class TestPackageToRemove:
             name="Bixby",
             source="Samsung",
             function="Voice assistant",
-            category="bloatware",
+            category="vendor",
             action="remove",
         )
         assert pkg.id == "com.samsung.bixby"
@@ -66,7 +66,7 @@ class TestPackageToRemove:
             "name": "Bixby",
             "source": "Samsung",
             "function": "Voice assistant",
-            "category": "bloatware",
+            "category": "vendor",
             "action": "remove",
         }
         pkg = PackageToRemove.from_dict(data)
