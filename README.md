@@ -1,268 +1,250 @@
 # Clearphone
 
-**Transform your Android smartphone into a minimal, low-distraction device.**
+Clearphone is a developer-focused tool for configuring Android phones into **low-distraction, privacy-respecting devices**.
 
-Clearphone removes pre-installed apps and installs privacy-focused open-source alternatives, giving you a phone that respects your attention and your privacy.
+It removes selected pre-installed system and vendor apps, installs a curated replacement app set, and applies device-specific configuration using explicit, repeatable steps — all **without root, custom ROMs, or Device Owner / MDM privileges**.
 
-## What It Does
-
-- **Removes pre-installed apps**: Bixby, Samsung/Google/carrier apps, browser, and Play Store
-- **Browserless and appstore-less by default**: No web browser, no app store — just the apps you need
-- **Installs FOSS replacements**: Launcher, keyboard, dialer, messaging, contacts, gallery, file manager
-- **Camera choice**: Keep your high-quality stock camera or install Fossify Camera for simpler integration
-- **Optional extras**: Weather, music, calculator, calendar, maps, and more
-- **Optional proprietary apps**: WhatsApp, Signal, Telegram, Discord (direct APK downloads, no Play Store)
-- **No root required**: Works on locked bootloaders
-- **Zero external dependencies**: No need to install ADB or Android SDK separately
-
-## Quick Start
-
-```bash
-# Install
-pip install clearphone
-
-# Connect phone via USB (enable USB debugging first)
-# Configure your phone
-clearphone configure device-profiles/samsung-s24.toml
-```
-
-That's it. No ADB installation, no SDK setup, no path configuration.
-
-**First-time setup:**
-1. Enable USB debugging on your phone (Settings → Developer Options → USB debugging)
-2. Connect your phone via USB
-3. Run clearphone — it will prompt you to authorize the connection on your phone
-4. Tap "Allow" on your phone's USB debugging prompt
-
-## CLI Usage
-
-### Basic Commands
-
-```bash
-clearphone configure <profile>     # Configure a phone
-clearphone list-profiles           # Show available profiles
-clearphone show-profile <profile>  # Show profile details
-```
-
-### Configuration Options
-
-```bash
-# Default: core apps only, no browser, no Play Store (clearphone mode)
-clearphone configure device-profiles/samsung-s24.toml
-
-# Preview changes without making them
-clearphone configure device-profiles/samsung-s24.toml --dry-run
-
-# Interactive mode: guided prompts for extras selection
-clearphone configure device-profiles/samsung-s24.toml --interactive
-
-# Smartphone mode: keep browser and Play Store
-clearphone configure device-profiles/samsung-s24.toml --smartphone-mode
-
-# Install specific extras
-clearphone configure device-profiles/samsung-s24.toml --install-whatsapp --install-weather
-
-# Keep stock camera instead of Fossify Camera
-clearphone configure device-profiles/samsung-s24.toml --keep-vendor-camera
-```
-
-### Global Toggles (for configured phones)
-
-```bash
-clearphone --enable-browser        # Install Fennec browser
-clearphone --disable-browser       # Remove browser
-clearphone --enable-play-store     # Enable Play Store
-clearphone --disable-play-store    # Disable Play Store
-clearphone --clearphone-mode       # Disable both (default)
-clearphone --smartphone-mode       # Enable both
-```
-
-### Available Extras
-
-**FOSS Apps:** `--install-weather`, `--install-music`, `--install-calculator`, `--install-clock`, `--install-notes`, `--install-calendar`, `--install-flashlight`, `--install-maps`
-
-**Proprietary Apps:** `--install-whatsapp`, `--install-signal`, `--install-telegram`, `--install-discord`
-
-## What Happens During Configuration
-
-1. **Pre-installed app removal** — Removes Bixby, carrier apps, social media, stock browser, etc.
-2. **Core apps installation** — Downloads from F-Droid and installs launcher, keyboard, dialer, messaging, contacts, gallery, file manager
-3. **Optional apps** — Installs any extras you specified via flags or interactive prompts
-4. **Default configuration** — Sets installed apps as system defaults
-
-**Most users don't need the Play Store.** The Clearphone app suite covers essential phone functions, and messaging apps (Signal, WhatsApp, etc.) can be installed directly. Use `--smartphone-mode` if you need Play Store access.
-
-## Supported Devices
-
-| Device | Profile | Maintainer |
-|--------|---------|------------|
-| Samsung Galaxy S24 | `device-profiles/samsung-s24.toml` | @glw907 |
-| Google Pixel 8/8a | `device-profiles/pixel-8a.toml` | *Planned* |
-
-## Project Status
-
-**Current version:** 0.1.0 (CLI prototype)
-**Interface:** Command-line only
-**Stability:** Early development — expect changes
-
-## Why Clearphone?
-
-Modern smartphones come loaded with apps you didn't ask for and can't remove. Carriers, manufacturers, and platform providers all want your attention and your data. Clearphone gives you a phone that serves you, not them.
-
-**What makes Clearphone different:**
-- **Zero-configuration install** — `pip install clearphone` and you're ready. No SDK, no ADB, no path setup.
-- **Device profiles** maintained by real users testing on real hardware
-- **Shared apps catalog** — no duplication across profiles
-- **Interactive camera choice** with honest tradeoff explanation
-- **Continue on recoverable errors** — better to complete with warnings than fail entirely
-- **Event-driven architecture** — same core logic for CLI, TUI, and future web interface
-
-## Design Philosophy
-
-### Browserless and Appstore-less by Default
-
-A Clearphone-configured device has **no web browser and no app store** by default. This is intentional:
-
-- **The browser is the biggest distraction vector.** Social media, news, shopping, endless scrolling — it all happens through the browser. Removing it eliminates the temptation entirely.
-- **The app store enables impulse installs.** Without it, you can't impulsively download distracting apps. Every app on your phone is there because you deliberately chose it during setup.
-- **You don't need them.** Clearphone installs everything most people need: calls, texts, camera, maps, music, weather. Messaging apps (Signal, WhatsApp) can be installed directly without Play Store.
-
-**For users who need more flexibility**, Clearphone will offer an option to keep the browser and/or Play Store available but hidden from the home screen (planned feature). This provides a middle ground between full lockdown and unrestricted access.
-
-### Minimal External Dependencies
-
-Clearphone aims for the simplest possible installation experience. We bundle or implement everything needed to communicate with your phone:
-
-- **No ADB binary required** — We use a pure-Python USB implementation to communicate directly with your device
-- **No Android SDK required** — Everything is self-contained
-- **No system-level configuration** — No udev rules (Linux), no driver installation (Windows), no special setup
-- **Single command install** — `pip install clearphone` includes everything
-
-This means a user can go from "never heard of Clearphone" to "configuring their phone" in under a minute.
-
-### Rootless Operation
-
-Uses `pm uninstall --user 0`, which works on locked bootloaders and is safer than root operations. Your phone's warranty and security model remain intact.
-
-### Honest Tradeoffs
-
-We don't pretend everything is perfect. When you choose between stock camera and Fossify Camera, we tell you exactly what you gain and lose with each option.
-
-## Key Design Decisions
-
-**Pure-Python USB communication** — Connects directly to your phone via USB using the `adb-shell` library. No external ADB binary needed. RSA keys for device authentication are generated automatically and stored in `~/.clearphone/`.
-
-**F-Droid Repository + Direct APK Downloads** — Open-source apps downloaded from F-Droid's repository; proprietary apps downloaded from official sources. No F-Droid app or Google Play required.
-
-**Device maintainer model** — Each profile has a dedicated maintainer who tests on real hardware and keeps it current.
-
-**Camera choice before removal** — Ask users whether they want stock camera (better photos, broken UI links) or Fossify Camera (simpler, lower quality) BEFORE removing packages. Conditional package removal based on choice.
-
-**No customization UI** — Device profiles define everything. Technical users edit TOML directly. No "just this once" options.
-
-**Continue on recoverable errors** — Some packages can't be removed (Knox-protected, system-critical). Configuration completes with warnings.
-
-## Architecture
-
-**Event-driven core** — All core logic is UI-agnostic and communicates through events. No module prints directly to console.
-
-```python
-# Core modules yield events
-for event in workflow.execute(profile, adb, dry_run=False):
-    if event.type == EventType.PACKAGE_REMOVED:
-        print(f"Removed: {event.package_name}")
-```
-
-This enables:
-- Testing without UI (inspect event sequences)
-- Multiple interfaces (CLI, TUI, web) from the same core
-- Clean separation of concerns
-
-## Documentation
-
-- `docs/requirements.md` — Functional and non-functional requirements
-- `docs/style-guide.md` — Terminology and writing standards
-- `CLAUDE.md` — Development guide for AI-assisted development
-
-## Contributing
-
-This project is in early development. Device profile contributions are welcome once the core is stable.
-
-If you want to become a device maintainer:
-1. Test the tool on your device
-2. Create or update a device profile
-3. Commit to keeping it current with OS updates
-
-See `CONTRIBUTING.md` for guidelines.
-
-## Acknowledgments
-
-This project stands on the shoulders of giants:
-
-### F-Droid
-
-The entire F-Droid ecosystem makes this project possible. F-Droid provides trusted, reproducible builds of open-source Android apps and maintains the infrastructure for secure distribution. Without F-Droid, building a privacy-respecting phone with open-source apps would require users to compile and verify every app themselves.
-
-### Fossify
-
-The Fossify suite (formerly Simple Mobile Tools) provides essential phone functionality with clean, simple interfaces. Clearphone uses Fossify Dialer, Messages, Contacts, Gallery, Camera (optional), Files, Music, Calculator, Clock, Notes, Calendar, and Flashlight. These apps prove that open-source alternatives can be both beautiful and functional, without ads, tracking, or unnecessary permissions.
-
-### Olauncher
-
-Olauncher provides the minimal launcher that reduces distractions and helps users focus on what matters. Its clean, text-based interface is the foundation of the configured phone experience.
-
-### FUTO Keyboard
-
-FUTO Keyboard delivers privacy-focused typing with offline voice input, ensuring your keystrokes and voice data never leave your device.
-
-### Breezy Weather
-
-Breezy Weather is a beautiful, privacy-focused weather app that provides detailed forecasts without tracking or ads. It pulls data from multiple sources (Open-Meteo, AccuWeather, and others) and presents it in a clean, customizable interface. It proves open-source apps can match or exceed proprietary alternatives in both design and functionality.
-
-### OsmAnd & OpenStreetMap
-
-OsmAnd (OSM Automated Navigation Directions) provides offline maps and turn-by-turn navigation powered by OpenStreetMap data. This is crucial for a low-distraction, privacy-respecting phone — you can download entire regions for offline use, meaning no tracking, no data mining, and navigation that works even without cell service. OpenStreetMap itself deserves recognition as a community-built, open-data alternative to proprietary mapping services. It's proof that collaborative, open models can compete with tech giants.
-
-### Tom4tot's Galaxy S24 Debloat Research
-
-The Samsung Galaxy S24 device profile is informed by [Tom4tot's Galaxy-S24-Debloat-Script](https://github.com/Tom4tot/Galaxy-S24-Debloat-Script). Their comprehensive research on which packages can be safely removed saved significant testing time and helped ensure our profile is thorough.
-
-### adb-shell
-
-The [adb-shell](https://github.com/JeffLIrion/adb_shell) Python library enables Clearphone's zero-dependency approach by providing pure-Python ADB protocol implementation. This eliminates the need for users to install the Android SDK or configure ADB separately.
-
-### Proprietary Software Vendors
-
-Thank you to **Meta** (WhatsApp), **Signal Foundation** (Signal), **Telegram** (Telegram), and **Discord** for making direct APK downloads available. This allows users to install these apps without Google Play Services, preserving choice and reducing platform lock-in.
-
-### Google and the Android Open Source Project
-
-Thank you to **Google** for keeping Android open enough for projects like this to exist. The ability to use ADB to remove pre-installed apps and sideload alternatives is not guaranteed — it requires deliberate decisions to preserve user freedom.
-
-We hope Google continues to maintain Android's openness, even as platform and business pressures push toward more restrictive models.
-
-## License
-
-Clearphone is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
-
-**What this means:**
-- ✓ You can use, modify, and distribute this software freely
-- ✓ You must share modifications under the same license
-- ✓ Source code must be made available
-- ✓ No warranty is provided
-
-**About the apps Clearphone installs:**
-
-The GPL v3 license applies **only to the Clearphone tool itself** (the code that configures your phone). It does **not** apply to the apps that Clearphone installs.
-
-Each app (Fossify Gallery, WhatsApp, Signal, etc.) has its own license. Installing proprietary apps via Clearphone does not make them GPL-licensed. The GPL's "mere aggregation" principle means distributing GPL software alongside non-GPL software is perfectly fine, as long as they remain separate works.
-
-Clearphone is a configuration tool, not an app distributor — it directs your phone to download apps from their original sources (F-Droid, official APK sites).
-
-See `LICENSE` for the full license text.
+Clearphone is intentionally opinionated. It prioritizes clarity, auditability, and honest tradeoffs over flexibility or enforcement claims.
 
 ---
 
-**Status:** Early development
-**Maintainer:** @glw907
-**Contributions:** Welcome once core is stable
+## Project Status
+
+Clearphone is currently in **Phase I**.
+
+Phase I delivers a **working command-line prototype** intended for developers and early adopters. It is not consumer-ready software and does not attempt to solve onboarding, UX polish, or long-term device management.
+
+The CLI is treated as a reference interface for validating core architecture decisions.
+
+---
+
+## What Clearphone Does
+
+Clearphone configures a supported Android device into a strict “clearphone” state by default:
+
+- Removes or disables selected OEM, carrier, and system apps
+- Removes or disables the stock browser
+- Removes or disables the Google Play Store app
+- Installs a curated set of replacement apps (primarily open source)
+- Applies device-specific package handling via maintained profiles
+- Makes all actions explicit and observable
+
+Browser or Play Store access can be re-enabled only through explicit CLI commands.  
+When enabled, the browser installed is **Fennec**; OEM browsers are not restored in Phase I.
+
+---
+
+## Rationale
+
+Modern smartphones combine useful capabilities with defaults that encourage distraction, frequent app churn, and broad data collection.
+
+Clearphone starts from a few practical assumptions:
+
+- Some smartphone functions are necessary and valuable (calls, messages, maps, camera, utilities).
+- Browsers and app stores are the primary vectors for unbounded usage and impulse installs.
+- Partial or cosmetic restrictions often result in confusing or brittle systems.
+
+Rather than attempting to lock devices down completely, Clearphone removes certain defaults entirely and replaces them with a smaller, curated surface area. Where Android imposes limits, those limits are surfaced explicitly rather than worked around.
+
+---
+
+## Supported Devices (Phase I)
+
+Phase I officially supports two devices:
+
+**Samsung Galaxy S24 (One UI, stock firmware)**  
+The Galaxy S24 serves as a stress test for Clearphone’s device-profile approach. Samsung’s Android distribution includes a large number of preinstalled vendor apps and system integrations. Supporting a heavily customized OEM device helps validate that the profile-based model can handle complex environments.  
+The Galaxy S24 is also the lead developer’s daily driver, which enables frequent real-world testing and rapid feedback as updates are released.
+
+**Google Pixel 8 / 8a (stock Android)**  
+The Pixel 8 and 8a represent the opposite end of the spectrum: relatively clean, stock Android devices with minimal manufacturer customization. These devices serve as the long-term baseline target for Clearphone due to predictable behavior, timely updates, and broad availability.
+
+Supporting both devices early validates Clearphone across fundamentally different Android environments.
+
+Clearphone uses a **maintainer model** for device support. Work on additional phones can begin when contributors are willing to maintain and test profiles on real hardware.
+
+---
+
+## Installation (v1.0)
+
+Phase I targets developers and early adopters.
+
+While installation via `pip` is supported, an explicit Phase I goal is to provide **platform-specific, Python-packaged downloads** (macOS, Linux, Windows) so testers do not need to manage Python environments or install dependencies manually. Until those packages are available, installation via `pip` is the supported path.
+
+### Requirements
+
+- Python **3.11+**
+- A supported Android device
+- USB debugging enabled
+- **System `adb` available** in your PATH
+
+### Installing ADB
+
+Phase I requires the Android Debug Bridge (`adb`) to be available on your system. Clearphone does not bundle or install ADB.
+
+Rather than duplicating installation instructions here, follow the official Android documentation:
+
+- Official ADB overview: https://developer.android.com/tools/adb
+- Download Android SDK Platform Tools (includes `adb`): https://developer.android.com/tools/releases/platform-tools
+
+You do not need to install Android Studio. After installation, confirm `adb` is available on your PATH:
+
+```bash
+adb version
+```
+
+### Install
+
+```bash
+pip install clearphone
+```
+
+---
+
+## Basic Usage
+
+Connect your phone via USB and authorize debugging.
+
+```bash
+clearphone devices
+clearphone configure
+```
+
+---
+
+## Project Landscape
+
+Clearphone uses **two GitHub Projects** to separate planning from execution. This separation is intentional and helps keep active development focused while still making future ideas visible.
+
+**Planning & Roadmap**  
+This is a long-lived, non-executable project. It captures future ideas, architectural questions, and deferred initiatives. Items in Planning & Roadmap are exploratory and do not represent commitments or scheduled work.
+
+**Phase Delivery Projects**  
+Each development phase has a dedicated Delivery project (for example, “Phase I — Delivery”). A Delivery project contains only executable work required to complete that phase. Every issue in a Delivery project blocks phase completion. When a phase ships, its Delivery project is archived and not reused.
+
+Work moves from Planning & Roadmap into a Phase Delivery project only when it is explicitly in scope. Items are promoted, not duplicated, and once work begins the Delivery project is the sole source of truth for that phase.
+
+If you want to contribute code, start with the current Phase Delivery project. If you want to discuss future directions or constraints, start with Planning & Roadmap.
+
+---
+
+## Command-Line Reference (Phase I)
+
+The Clearphone CLI is designed for power users and developers. Commands are explicit, observable, and reversible where Android permits.
+
+### Global Options
+
+These flags apply to most commands.
+
+| Option | Description |
+|------|-------------|
+| `--serial <SERIAL>` | Select a specific device if multiple are connected |
+| `--dry-run` | Show planned actions without making changes |
+| `--json` | Emit machine-readable event output |
+| `--verbose` | Increase output detail |
+| `--debug` | Maximum diagnostics (implies `--verbose`) |
+| `--help` | Show structured help for the current command |
+
+### Core Commands
+
+| Command | Purpose |
+|------|---------|
+| `clearphone version` | Show Clearphone version |
+| `clearphone doctor` | Check environment and device connectivity |
+| `clearphone devices` | List connected Android devices |
+
+### Configuration
+
+| Command | Purpose |
+|------|---------|
+| `clearphone configure` | Configure a supported device (auto-detects profile) |
+| `--profile <profile>` | Explicitly select a device profile |
+| `--extra <id>` | Install an optional app (repeatable) |
+| `--interactive` | Prompt for optional extras during configuration |
+
+### Profiles and Extras
+
+| Command | Purpose |
+|------|---------|
+| `clearphone profiles list` | List available device profiles |
+| `clearphone profiles show <profile>` | Show details of a device profile |
+| `clearphone extras list` | List available optional apps (“extras”) |
+| `clearphone extras show <id>` | Show details for a specific extra |
+
+### Feature Toggles
+
+| Command | Purpose |
+|------|---------|
+| `clearphone browser on` | Enable browser access (installs Fennec) |
+| `clearphone browser off` | Disable browser access |
+| `clearphone appstore on` | Enable the Google Play Store app (best effort) |
+| `clearphone appstore off` | Disable the Play Store app |
+
+### Maintenance and Integrity
+
+| Command | Purpose |
+|------|---------|
+| `clearphone update` | Update Clearphone-managed apps |
+| `clearphone audit` | Detect configuration drift |
+| `clearphone state show` | Show Clearphone’s view of the device state |
+
+---
+
+## Usage Examples
+
+Configure a connected device:
+
+```bash
+clearphone configure
+```
+
+Preview changes without modifying the device:
+
+```bash
+clearphone configure --dry-run
+```
+
+Configure a device and install multiple extras:
+
+```bash
+clearphone configure --extra weather --extra maps --extra signal
+```
+
+Enable and disable browser access:
+
+```bash
+clearphone browser on
+clearphone browser off
+```
+
+Update all Clearphone-managed apps:
+
+```bash
+clearphone update
+```
+
+Audit the device for unexpected apps:
+
+```bash
+clearphone audit
+```
+
+---
+
+## `--help` Behavior
+
+The `--help` flag is intended to be a local, command-specific view of the same information presented in the command-line reference above. At every level (`clearphone --help`, `clearphone configure --help`, `clearphone browser --help`), help output should show available subcommands and options with short, factual descriptions, using the same terminology and defaults as this README.
+
+---
+
+## Contributing
+
+For architectural context, development rules, and guidance for AI-assisted development, read **CLAUDE.md**. For day-to-day work, follow the current Phase Delivery project.
+
+---
+
+## License
+
+Clearphone is licensed under the **GNU GPL v3 (GPL-3.0)**.
+
+The GPL applies to the Clearphone tool itself. Apps installed by Clearphone are governed by their own licenses and are downloaded from their original sources.
